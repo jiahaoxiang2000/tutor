@@ -40,3 +40,10 @@
 
 % Settings specific to report
 \geometry{margin=0.5in, paperheight=11in, paperwidth=8.5in} % Set paper size
+
+\renewcommand{\maketitle}{
+  \begin{center}
+    \LARGE\bfseries\thetitle\\[0.5em]
+    \large\today
+  \end{center}
+}
