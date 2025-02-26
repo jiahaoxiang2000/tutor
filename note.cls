@@ -52,11 +52,11 @@
 \pagestyle{fancy}
 \fancyhf{} % Clear all header and footer fields
 \renewcommand{\headrulewidth}{0pt} % Remove header rule
-\fancyfoot[L]{\footnotesize \copyright\ \the\year\ Isomo} % Copyright notice in footer
+\fancyfoot[L]{\footnotesize \copyright\ \the\year\ \theauthor} % Copyright notice with author name in footer
 \fancyfoot[R]{\thepage} % Page number on right side
 \fancypagestyle{plain}{% Also apply to the first page
   \fancyhf{}
   \renewcommand{\headrulewidth}{0pt}
-  \fancyfoot[L]{\footnotesize \copyright\ \the\year\ Isomo}
+  \fancyfoot[L]{\footnotesize \copyright\ \the\year\ \theauthor}
   \fancyfoot[R]{\thepage}
 }
