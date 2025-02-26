@@ -695,49 +695,62 @@ LinkList CreateList_H() {
 \begin{figure}[h]
   \centering
   \begin{tikzpicture}
-    % 头节点
-    \node[draw, circle] (head) at (0,0) {L};
+    % Headers for each step
+    \node at (0,4.5) {初始状态};
+    \node at (5,4.5) {插入第一个节点};
+    \node at (10,4.5) {插入第二个节点};
+    \node at (5,0.5) {最终结果};
 
-    % 初始状态
-    \draw[->] (head) -- (1,0);
-    \node at (1.5,0) {NULL};
+    % Initial state
+    \node[draw, circle] (head1) at (0,3.5) {L};
+    \draw[->] (head1) -- (1,3.5);
+    \node at (1.5,3.5) {NULL};
 
-    % 加入第一个节点
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (4,3) {};
+    % First node insertion
+    \node[draw, circle] (head2) at (5,3.5) {L};
+    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (node1) at (7,3.5) {};
     \draw (node1.center) -- (node1.east);
-    \node at (4,3.5) {新节点p};
     \node at (node1.west) [xshift=0.5cm] {$a_1$};
-    \draw[->] (node1.east) -- (5.5,3);
-    \node at (6,3) {NULL};
+    \draw[->] (head2) -- (node1);
+    \draw[->] (node1.east) -- (8.5,3.5);
+    \node at (9,3.5) {NULL};
+    \node[draw, rectangle, dashed] at (7,2.8) {新节点};
 
-    \draw[->, dashed] (node1.east) -- (1,0.3);
-    \draw[->, dashed] (head) -- (3,3);
+    % Second node insertion
+    \node[draw, circle] (head3) at (10,3.5) {L};
+    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (node2a) at (12,3.5) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (node2b) at (14,3.5) {};
+    \draw (node2a.center) -- (node2a.east);
+    \draw (node2b.center) -- (node2b.east);
+    \node at (node2a.west) [xshift=0.5cm] {$a_2$};
+    \node at (node2b.west) [xshift=0.5cm] {$a_1$};
+    \draw[->] (head3) -- (node2a);
+    \draw[->] (node2a.east) -- (node2b.west);
+    \draw[->] (node2b.east) -- (15.5,3.5);
+    \node at (16,3.5) {NULL};
+    \node[draw, rectangle, dashed] at (12,2.8) {新节点};
 
-    % 加入第二个节点
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (4,1.5) {};
-    \draw (node2.center) -- (node2.east);
-    \node at (4,2) {新节点p};
-    \node at (node2.west) [xshift=0.5cm] {$a_2$};
+    % Steps illustration
+    \draw[->, thick] (2.5,3.5) -- (3.5,3.5);
+    \draw[->, thick] (9.5,3.5) -- (8.5,3.5);
 
-    \draw[->, dashed] (node2.east) -- (node1.west);
-    \draw[->, dashed] (head) -- (3,1.5);
-
-    % 最终结果
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result1) at (4,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result2) at (7,0) {};
-
+    % Final result with detailed explanation
+    \node[draw, circle] (head4) at (2,2) {L};
+    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (result1) at (4,2) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (result2) at (6,2) {};
     \draw (result1.center) -- (result1.east);
     \draw (result2.center) -- (result2.east);
-
     \node at (result1.west) [xshift=0.5cm] {$a_2$};
     \node at (result2.west) [xshift=0.5cm] {$a_1$};
-
-    \draw[->] (head) -- (result1);
+    \draw[->] (head4) -- (result1);
     \draw[->] (result1.east) -- (result2.west);
-    \draw[->] (result2.east) -- (8.5,0);
-    \node at (9,0) {NULL};
+    \draw[->] (result2.east) -- (7.5,2);
+    \node at (8,2) {NULL};
+
+    % Explanation of head insertion logic
+    \node[align=left] at (5,0) {头插法特点: 新节点总是插入到链表头部，导致元素顺序与输入顺序相反};
   \end{tikzpicture}
-  \caption{单链表头插法示意图}
+  \caption{单链表头插法示意图（逆序建立）}
 \end{figure}
 
 2. 尾插法（正序建立）
@@ -874,6 +887,637 @@ Status ListDelete(LinkList &L, int i, ElemType &e) {
 
     p->next = q->next;      // 第i-1个节点指向第i+1个节点
     free(q);                // 释放被删除节点的空间
+
+    return OK;
+}
+\end{verbatim}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 原始链表
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (0,2) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (3,2) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (6,2) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node4) at (9,2) {};
+
+    \draw (node1.center) -- (node1.east);
+    \draw (node2.center) -- (node2.east);
+    \draw (node3.center) -- (node3.east);
+    \draw (node4.center) -- (node4.east);
+
+    \node at (node1.west) [xshift=0.5cm] {$a_1$};
+    \node at (node2.west) [xshift=0.5cm] {$a_2$};
+    \node at (node3.west) [xshift=0.5cm] {$a_3$};
+    \node at (node4.west) [xshift=0.5cm] {$a_4$};
+
+    \draw[->] (node1.east) -- (node2.west);
+    \draw[->] (node2.east) -- (node3.west);
+    \draw[->] (node3.east) -- (node4.west);
+    \draw[->] (node4.east) -- (10.5,2);
+    \node at (11,2) {NULL};
+
+    % 待删除节点标记
+    \node at (6,2.7) {待删除节点};
+    \draw[dashed] (6,2.5) -- (6,2.2);
+
+    % 删除后的结果
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result1) at (0,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result2) at (3,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result4) at (9,0) {};
+
+    \draw (result1.center) -- (result1.east);
+    \draw (result2.center) -- (result2.east);
+    \draw (result4.center) -- (result4.east);
+
+    \node at (result1.west) [xshift=0.5cm] {$a_1$};
+    \node at (result2.west) [xshift=0.5cm] {$a_2$};
+    \node at (result4.west) [xshift=0.5cm] {$a_4$};
+
+    \draw[->] (result1.east) -- (result2.west);
+    \draw[->, thick, color=red] (result2.east) -- (result4.west);
+    \draw[->] (result4.east) -- (10.5,0);
+    \node at (11,0) {NULL};
+
+    % 箭头和说明
+    \draw[->, dashed] (3,1.7) -- (3,0.3);
+    \draw[->, dashed] (9,1.7) -- (9,0.3);
+
+    % 节点3被释放
+    \node[draw, rectangle, dashed, minimum width=2cm, minimum height=1cm] (node3free) at (6,0) {};
+    \draw[dashed] (node3free.center) -- (node3free.east);
+    \node at (node3free.west) [xshift=0.5cm, text opacity=0.5] {$a_3$};
+    \node at (6,-0.7) {被释放的节点};
+
+    % 显示释放过程
+    \draw[->, dashed] (node3.south) -- (node3free.north);
+  \end{tikzpicture}
+  \caption{单链表的删除操作示意图}
+\end{figure}
+
+\subsubsection{循环链表}
+
+循环链表是一种特殊的链表，其中最后一个节点的指针不是NULL，而是指向链表中的第一个节点或头节点，形成一个环。
+
+\paragraph{单循环链表}
+单循环链表是单链表的一种变形，其最后一个节点的next指针指向头节点，形成一个环。
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 头节点
+    \node[draw, circle] (head) at (0,0) {L};
+
+    % 节点
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (2,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (5,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (8,0) {};
+
+    % 节点内部
+    \draw (node1.center) -- (node1.east);
+    \draw (node2.center) -- (node2.east);
+    \draw (node3.center) -- (node3.east);
+
+    \node at (node1.west) [xshift=0.5cm] {$a_1$};
+    \node at (node2.west) [xshift=0.5cm] {$a_2$};
+    \node at (node3.west) [xshift=0.5cm] {$a_3$};
+
+    % 指针
+    \draw[->] (head) -- (node1);
+    \draw[->] (node1.east) -- (node2.west);
+    \draw[->] (node2.east) -- (node3.west);
+
+    % 循环连接
+    \draw[->] (node3.east) -- (9.5,0) arc (0:180:4.75) -- (0,0.5);
+  \end{tikzpicture}
+  \caption{单循环链表示意图}
+\end{figure}
+
+单循环链表的优点：
+\begin{itemize}
+  \item 从表中任一节点出发都能遍历整个链表
+  \item 适合于需要循环处理的数据结构，如约瑟夫问题
+  \item 在尾节点插入和删除操作更方便
+\end{itemize}
+
+\paragraph{循环链表的基本操作}
+
+1. 初始化循环链表
+\begin{verbatim}
+Status InitList(LinkList &L) {
+    L = (LinkList)malloc(sizeof(LNode));  // 创建头节点
+    if (!L) return ERROR;                 // 内存分配失败
+    L->next = L;                          // 头节点指向自己，形成环
+    return OK;
+}
+\end{verbatim}
+
+2. 判断循环链表是否为空
+\begin{verbatim}
+Status ListEmpty(LinkList L) {
+    if (L->next == L)  // 如果头节点指向自己，表示为空
+        return TRUE;
+    else
+        return FALSE;
+}
+\end{verbatim}
+
+3. 在循环链表尾部插入节点
+\begin{verbatim}
+Status InsertLast(LinkList &L, ElemType e) {
+    LinkList p = L;
+
+    // 查找尾节点
+    while (p->next != L)
+        p = p->next;
+
+    // 创建新节点
+    LinkList s = (LinkList)malloc(sizeof(LNode));
+    if (!s) return ERROR;
+    s->data = e;
+
+    // 插入到尾部
+    s->next = L;      // 新节点指向头节点
+    p->next = s;      // 原尾节点指向新节点
+
+    return OK;
+}
+\end{verbatim}
+
+\paragraph{约瑟夫问题的应用实例}
+约瑟夫问题（约瑟夫环）：n个人围成一圈，从第k个人开始报数，数到m的人出列，然后从下一个人开始重新报数，继续数到m的人出列，以此类推，直到所有人都出列，求出列顺序。
+
+\begin{verbatim}
+void Joseph(int n, int k, int m) {
+    // 创建包含n个节点的循环链表
+    LinkList L = (LinkList)malloc(sizeof(LNode));
+    LinkList p = L;
+
+    // 创建n个节点
+    for (int i = 1; i <= n; i++) {
+        LinkList s = (LinkList)malloc(sizeof(LNode));
+        s->data = i;  // 节点数据为人的编号
+        p->next = s;
+        p = s;
+    }
+    p->next = L->next;  // 最后一个节点指向第一个节点，形成循环
+
+    // 找到第k个人
+    p = L->next;
+    for (int i = 1; i < k; i++)
+        p = p->next;
+
+    // 依次找到第m个人并"出列"
+    LinkList q;
+    while (p->next != p) {  // 当只剩一个节点时结束
+        // 找到第m-1个节点
+        for (int i = 1; i < m-1; i++)
+            p = p->next;
+
+        q = p->next;  // q指向第m个节点，即要删除的节点
+        printf("%d ", q->data);  // 输出出列人的编号
+        p->next = q->next;  // 删除q节点
+        free(q);
+        p = p->next;  // p指向删除节点的下一个节点
+    }
+
+    printf("%d\n", p->data);  // 输出最后一个人的编号
+    free(p);
+}
+\end{verbatim}
+
+\subsubsection{双向链表}
+
+双向链表（Double Linked List）是一种更复杂的链表，它的每个节点有两个指针域，一个指向前驱节点，一个指向后继节点。
+
+\paragraph{双向链表的节点结构}
+\begin{verbatim}
+typedef struct DuLNode {
+    ElemType data;           // 数据域
+    struct DuLNode *prior;   // 前驱指针
+    struct DuLNode *next;    // 后继指针
+} DuLNode, *DuLinkList;
+\end{verbatim}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 头指针
+    \node[draw, rectangle] (head) at (0,0) {head};
+
+    % 节点
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (2,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (5,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (8,0) {};
+
+    % 两个分割线
+    \draw (1.33,0.5) -- (1.33,-0.5);
+    \draw (2.67,0.5) -- (2.67,-0.5);
+    \draw (4.33,0.5) -- (4.33,-0.5);
+    \draw (5.67,0.5) -- (5.67,-0.5);
+    \draw (7.33,0.5) -- (7.33,-0.5);
+    \draw (8.67,0.5) -- (8.67,-0.5);
+
+    \node at (node1.west) [xshift=0.75cm] {$a_1$};
+    \node at (node2.west) [xshift=0.75cm] {$a_2$};
+    \node at (node3.west) [xshift=0.75cm] {$a_3$};
+    \node at (1,0) {NULL};
+    \node at (4,0) {};
+    \node at (7,0) {};
+    \node at (10,0) {NULL};
+
+    % 前向指针
+    \draw[->] (node1.west) -- (0.5,0);
+    \draw[->] (node2.west) -- (node1.east);
+    \draw[->] (node3.west) -- (node2.east);
+
+    % 后向指针
+    \draw[->] (head) -- (node1.west);
+    \draw[->] (node1.east) -- (node2.west);
+    \draw[->] (node2.east) -- (node3.west);
+    \draw[->] (node3.east) -- (9.5,0);
+  \end{tikzpicture}
+  \caption{双向链表示意图}
+\end{figure}
+
+\paragraph{双向链表的初始化}
+\begin{verbatim}
+Status InitDuList(DuLinkList &L) {
+    L = (DuLinkList)malloc(sizeof(DuLNode));
+    if (!L) return ERROR;
+
+    L->prior = NULL;
+    L->next = NULL;
+
+    return OK;
+}
+\end{verbatim}
+
+\paragraph{双向链表的插入操作}
+在双向链表中第i个位置之前插入元素e。
+
+\begin{verbatim}
+Status ListInsert_DuL(DuLinkList &L, int i, ElemType e) {
+    // 查找第i个节点
+    DuLinkList p = L;
+    int j = 0;
+
+    while (p && j < i) {
+        p = p->next;
+        j++;
+    }
+
+    if (!p || j > i) return ERROR;  // i值不合法
+
+    // 创建新节点
+    DuLinkList s = (DuLinkList)malloc(sizeof(DuLNode));
+    if (!s) return ERROR;
+    s->data = e;
+
+    // 插入操作
+    s->prior = p->prior;  // 设置新节点的前驱
+    s->next = p;          // 设置新节点的后继
+    p->prior->next = s;   // 设置前驱节点的后继
+    p->prior = s;         // 设置p的前驱
+
+    return OK;
+}
+\end{verbatim}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 原始链表
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (0,2) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (3,2) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (6,2) {};
+
+    % 两个分割线
+    \draw (-0.67,2.5) -- (-0.67,1.5);
+    \draw (0.67,2.5) -- (0.67,1.5);
+    \draw (2.33,2.5) -- (2.33,1.5);
+    \draw (3.67,2.5) -- (3.67,1.5);
+    \draw (5.33,2.5) -- (5.33,1.5);
+    \draw (6.67,2.5) -- (6.67,1.5);
+
+    \node at (node1.west) [xshift=0.75cm] {$a_1$};
+    \node at (node2.west) [xshift=0.75cm] {$a_2$};
+    \node at (node3.west) [xshift=0.75cm] {$a_3$};
+
+    % 原始链表连接
+    \draw[->] (node1.east) -- (node2.west);
+    \draw[->] (node2.east) -- (node3.west);
+    \draw[<-] (node1.west) -- (-1,2);
+    \draw[<-] (node2.west) -- (node1.east);
+    \draw[<-] (node3.west) -- (node2.east);
+    \draw[->] (node3.east) -- (7.5,2);
+
+    % 新节点
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (newnode) at (3,0) {};
+    \draw (2.33,0.5) -- (2.33,-0.5);
+    \draw (3.67,0.5) -- (3.67,-0.5);
+    \node at (newnode.west) [xshift=0.75cm] {$e$};
+    \node at (3,-1) {新节点};
+
+    % 插入过程中的连接关系
+    \draw[->, dashed, color=red] (newnode.east) -- (node3.west);
+    \draw[->, dashed, color=red] (newnode.west) -- (node1.east);
+    \draw[<-, dashed, color=red] (newnode.east) -- (node3.west);
+    \draw[<-, dashed, color=red] (newnode.west) -- (node1.east);
+  \end{tikzpicture}
+  \caption{双向链表的插入操作示意图}
+\end{figure}
+
+\paragraph{双向链表的删除操作}
+删除双向链表中的第i个节点。
+
+\begin{verbatim}
+Status ListDelete_DuL(DuLinkList &L, int i, ElemType &e) {
+    // 查找第i个节点
+    DuLinkList p = L;
+    int j = 0;
+
+    while (p && j < i) {
+        p = p->next;
+        j++;
+    }
+
+    if (!p || j > i) return ERROR;  // i值不合法
+
+    e = p->data;  // 保存被删除节点的值
+
+    // 删除操作
+    p->prior->next = p->next;  // 前驱节点的后继指向后继节点
+
+    if (p->next)  // 若p不是最后一个节点
+        p->next->prior = p->prior;  // 后继节点的前驱指向前驱节点
+
+    free(p);  // 释放节点
+
+    return OK;
+}
+\end{verbatim}
+
+\paragraph{双向循环链表}
+双向循环链表是结合了循环链表和双向链表的特点，其中第一个节点的前驱指向最后一个节点，最后一个节点的后继指向第一个节点。
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 头节点
+    \node[draw, circle] (head) at (0,0) {L};
+
+    % 节点
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (2,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (5,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (8,0) {};
+
+    % 两个分割线
+    \draw (1.33,0.5) -- (1.33,-0.5);
+    \draw (2.67,0.5) -- (2.67,-0.5);
+    \draw (4.33,0.5) -- (4.33,-0.5);
+    \draw (5.67,0.5) -- (5.67,-0.5);
+    \draw (7.33,0.5) -- (7.33,-0.5);
+    \draw (8.67,0.5) -- (8.67,-0.5);
+
+    \node at (node1.west) [xshift=0.75cm] {$a_1$};
+    \node at (node2.west) [xshift=0.75cm] {$a_2$};
+    \node at (node3.west) [xshift=0.75cm] {$a_3$};
+
+    % 后向指针
+    \draw[->] (head) -- (node1.west);
+    \draw[->] (node1.east) -- (node2.west);
+    \draw[->] (node2.east) -- (node3.west);
+    \draw[->] (node3.east) -- (9.5,0) arc (0:180:4.75) -- (0,0.5);
+
+    % 前向指针
+    \draw[<-, bend left] (node1.west) -- (node3.east);
+    \draw[<-] (node2.west) -- (node1.east);
+    \draw[<-] (node3.west) -- (node2.east);
+  \end{tikzpicture}
+  \caption{双向循环链表示意图}
+\end{figure}
+
+双向循环链表的优点：
+\begin{itemize}
+  \item 可以双向遍历，提高了访问效率
+  \item 可以从任意节点开始遍历整个链表
+  \item 某些特定操作（如删除给定节点）不需要再查找其前驱节点
+\end{itemize}
+
+\subsection{线性表各种实现方式的比较}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|l|c|c|c|c|}
+    \hline
+    \textbf{操作} & \textbf{顺序表} & \textbf{单链表} & \textbf{循环链表} & \textbf{双向链表} \\
+    \hline
+    按位查找 & $O(1)$ & $O(n)$ & $O(n)$ & $O(n)$ \\
+    按值查找 & $O(n)$ & $O(n)$ & $O(n)$ & $O(n)$ \\
+    插入操作 & $O(n)$ & $O(1)$* & $O(1)$* & $O(1)$* \\
+    删除操作 & $O(n)$ & $O(1)$* & $O(1)$* & $O(1)$* \\
+    空间效率 & 高 & 低 & 低 & 最低 \\
+    \hline
+  \end{tabular}
+  \caption{线性表各种实现方式的时间复杂度比较 (*不考虑查找时间)}
+\end{table}
+
+\paragraph{存储空间分析}
+\begin{itemize}
+  \item \textbf{顺序表}：只需要存储数据元素本身和少量的管理信息（如表长）。
+  \item \textbf{单链表}：每个节点除了数据域外，还需要一个指针域，额外空间开销约为数据空间的一倍。
+  \item \textbf{双向链表}：每个节点需要两个指针域，额外空间开销约为数据空间的两倍。
+\end{itemize}
+
+\paragraph{适用场合分析}
+\begin{itemize}
+  \item \textbf{顺序表适用场合}：
+    \begin{enumerate}
+      \item 表长变化不大，或可预先确定表长上限
+      \item 经常按位序访问数据
+      \item 数据元素占用存储空间较小
+      \item 对存储空间利用率要求较高
+    \end{enumerate}
+  \item \textbf{单链表适用场合}：
+    \begin{enumerate}
+      \item 表长变化较大或无法预知
+      \item 经常插入和删除数据
+      \item 不需要按位置随机访问
+    \end{enumerate}
+  \item \textbf{循环链表适用场合}：
+    \begin{enumerate}
+      \item 需要循环遍历数据的场合
+      \item 需要频繁在首尾节点间切换的场合
+      \item 适用于约瑟夫环等问题
+    \end{enumerate}
+  \item \textbf{双向链表适用场合}：
+    \begin{enumerate}
+      \item 需要双向遍历数据的场合
+      \item 需要查找给定节点的前驱节点
+      \item 经常在两个方向上移动指针的场合
+    \end{enumerate}
+\end{itemize}
+
+\subsection{线性表的应用实例}
+
+\subsubsection{多项式表示}
+
+多项式$P(x) = a_0 + a_1x + a_2x^2 + \ldots + a_nx^n$可以用线性表表示：
+
+\paragraph{顺序表表示多项式}
+可以用一维数组按照指数递增的顺序存储各项系数。这种方式简单，但对于稀疏多项式（大多数系数为0）会浪费空间。
+
+\paragraph{链表表示多项式}
+对于稀疏多项式，更适合用链表表示，每个节点存储一个非零项的系数和指数。
+
+\begin{verbatim}
+typedef struct PolyNode {
+    float coef;             // 系数
+    int expon;              // 指数
+    struct PolyNode *next;  // 指向下一项的指针
+} PolyNode, *PolyList;
+\end{verbatim}
+
+\paragraph{多项式的加法}
+利用链表表示的多项式，可以实现高效的加法操作：
+
+\begin{verbatim}
+PolyList PolyAdd(PolyList PA, PolyList PB) {
+    PolyList PC = (PolyList)malloc(sizeof(PolyNode));  // 创建结果多项式的头节点
+    PC->next = NULL;
+    PolyList p = PA->next, q = PB->next, r = PC;  // p、q分别指向PA、PB的第一个节点，r指向PC的尾节点
+
+    while (p && q) {
+        if (p->expon == q->expon) {  // 指数相等，系数相加
+            float sum = p->coef + q->coef;
+            if (sum != 0.0) {  // 和不为0时才创建新节点
+                PolyList s = (PolyList)malloc(sizeof(PolyNode));
+                s->coef = sum;
+                s->expon = p->expon;
+                s->next = NULL;
+                r->next = s;
+                r = s;
+            }
+            p = p->next;
+            q = q->next;
+        } else if (p->expon < q->expon) {  // 将指数较小的项插入结果多项式
+            PolyList s = (PolyList)malloc(sizeof(PolyNode));
+            s->coef = p->coef;
+            s->expon = p->expon;
+            s->next = NULL;
+            r->next = s;
+            r = s;
+            p = p->next;
+        } else {  // p->expon > q->expon
+            PolyList s = (PolyList)malloc(sizeof(PolyNode));
+            s->coef = q->coef;
+            s->expon = q->expon;
+            s->next = NULL;
+            r->next = s;
+            r = s;
+            q = q->next;
+        }
+    }
+
+    // 将剩余项复制到结果多项式
+    while (p) {
+        PolyList s = (PolyList)malloc(sizeof(PolyNode));
+        s->coef = p->coef;
+        s->expon = p->expon;
+        s->next = NULL;
+        r->next = s;
+        r = s;
+        p = p->next;
+    }
+
+    while (q) {
+        PolyList s = (PolyList)malloc(sizeof(PolyNode));
+        s->coef = q->coef;
+        s->expon = q->expon;
+        s->next = NULL;
+        r->next = s;
+        r = s;
+        q = q->next;
+    }
+
+    return PC;
+}
+\end{verbatim}
+
+\subsection{线性表的实际应用}
+
+\subsubsection{线性表在数据库中的应用}
+关系型数据库中的表本质上是由记录组成的线性表，每条记录可视为线性表中的一个元素。数据库索引的实现也依赖于各种线性表结构，如B树、B+树等。
+
+\subsubsection{线性表在操作系统中的应用}
+操作系统中的进程调度队列、内存管理的空闲块链表等都是线性表的典型应用。
+
+\subsubsection{线性表在编译器设计中的应用}
+编译器中的符号表、词法分析时的标识符表等都可以使用线性表实现。
+
+\subsection{线性表的高级应用}
+
+\subsubsection{静态链表}
+静态链表是借助数组来描述线性表的链式存储，它既具有顺序表随机访问的特点，又具有链表插入删除方便的特点。
+
+\begin{verbatim}
+// 静态链表结构定义
+#define MAXSIZE 1000
+typedef struct {
+    ElemType data;
+    int next;    // 下一个元素的数组下标
+} SLinkList[MAXSIZE];
+
+// 初始化备用链表
+void InitSpace(SLinkList &space) {
+    for (int i = 0; i < MAXSIZE - 1; i++) {
+        space[i].next = i + 1;
+    }
+    space[MAXSIZE - 1].next = 0;  // 目前静态链表为空，最后一个元素的next为0
+}
+
+// 分配结点
+int Malloc_SL(SLinkList &space) {
+    int i = space[0].next;
+    if (i)
+        space[0].next = space[i].next;
+    return i;
+}
+
+// 回收结点
+void Free_SL(SLinkList &space, int k) {
+    space[k].next = space[0].next;
+    space[0].next = k;
+}
+\end{verbatim}
+
+\subsubsection{线性表的应用——文本编辑器}
+文本编辑器可以将文本的每一行作为线性表中的一个元素，使用双向链表实现可在O(1)时间内实现向上、向下翻页等操作。对于每一行文本，可再用一个线性表表示其中的字符。
+
+\begin{verbatim}
+// 文本编辑器的数据结构（伪代码）
+typedef struct Line {
+    char *text;           // 该行的文本内容
+    int length;           // 该行的长度
+    struct Line *prev;    // 指向前一行
+    struct Line *next;    // 指向后一行
+} Line, *TextEditor;
+
+// 在当前行后插入新行
+Status InsertLine(TextEditor &T, Line *current, char *text) {
+    Line *p = (Line *)malloc(sizeof(Line));
+    if (!p) return ERROR;
+
+    p->text = strdup(text);  // 复制文本
+    p->length = strlen(text);
+
+    p->prev = current;
+    p->next = current->next;
+
+    if (current->next)
+        current->next->prev = p;
+    current->next = p;
 
     return OK;
 }
