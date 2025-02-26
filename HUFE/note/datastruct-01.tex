@@ -304,4 +304,579 @@ Algorithm SequentialSearch(A[0...n-1], key):
 
 \section{线性表}
 
+\subsection{线性表的基本概念}
+
+\subsubsection{线性表的定义}
+\begin{itemize}
+  \item \textbf{线性表}（Linear List）是具有相同数据类型的n个数据元素的有限序列。
+  \item 其中，n为表长度，当n=0时称为空表。
+  \item 线性表中元素的位序（Position）是从1开始的。
+  \item 若用$L$表示线性表，则记为：$L = (a_1, a_2, \ldots, a_n)$
+  \item 线性表中元素的特点：
+    \begin{enumerate}
+      \item 除第一个元素外，每个元素有且仅有一个直接前驱。
+      \item 除最后一个元素外，每个元素有且仅有一个直接后继。
+    \end{enumerate}
+\end{itemize}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \node[draw, rectangle] (a1) at (0,0) {$a_1$};
+    \node[draw, rectangle] (a2) at (1.5,0) {$a_2$};
+    \node[draw, rectangle] (a3) at (3,0) {$a_3$};
+    \node at (4.5,0) {$\cdots$};
+    \node[draw, rectangle] (an) at (6,0) {$a_n$};
+
+    \draw[->] (a1) -- (a2);
+    \draw[->] (a2) -- (a3);
+    \draw[->] (a3) -- (3.7,0);
+    \draw[->] (5.3,0) -- (an);
+  \end{tikzpicture}
+  \caption{线性表的逻辑结构}
+\end{figure}
+
+\subsubsection{线性表的抽象数据类型描述}
+
+线性表的抽象数据类型（ADT）描述如下：
+
+\begin{verbatim}
+ADT LinearList {
+    数据对象:
+        D = {a_i | a_i ∈ ElementSet, i = 1, 2, ..., n, n ≥ 0}
+    数据关系:
+        R = {<a_i, a_{i+1}> | a_i, a_{i+1} ∈ D, i = 1, 2, ..., n-1}
+    基本操作:
+        InitList(&L)            // 初始化线性表
+        DestroyList(&L)         // 销毁线性表
+        ClearList(&L)           // 清空线性表
+        ListEmpty(L)            // 判断线性表是否为空
+        ListLength(L)           // 获取线性表长度
+        GetElem(L, i, &e)       // 获取第i个元素
+        LocateElem(L, e, compare)  // 查找元素e
+        PriorElem(L, cur_e, &pre_e)  // 获取元素cur_e的前驱
+        NextElem(L, cur_e, &next_e)  // 获取元素cur_e的后继
+        ListInsert(&L, i, e)    // 在第i个位置插入元素e
+        ListDelete(&L, i, &e)   // 删除第i个元素
+        ListTraverse(L, visit)  // 遍历线性表
+}
+\end{verbatim}
+
+\subsection{线性表的顺序表示}
+
+\subsubsection{顺序表的定义}
+\begin{itemize}
+  \item \textbf{顺序表}是用一组地址连续的存储单元依次存储线性表中的数据元素，使得逻辑上相邻的两个元素在物理位置上也相邻。
+  \item 顺序表是线性表的顺序存储结构。
+  \item 优点：
+    \begin{enumerate}
+      \item 随机访问特性：可以在$O(1)$时间内访问任意位置的元素。
+      \item 无须为表中元素之间的逻辑关系增加额外的存储空间。
+    \end{enumerate}
+  \item 缺点：
+    \begin{enumerate}
+      \item 插入和删除操作需要移动大量元素，效率较低。
+      \item 存储空间需要预先分配，可能会出现内存浪费或溢出的情况。
+    \end{enumerate}
+\end{itemize}
+
+\subsubsection{顺序表的存储结构}
+
+\paragraph{静态分配}
+在C语言中，可以用数组来实现顺序表的静态分配：
+
+\begin{verbatim}
+#define MAXSIZE 100  // 顺序表的最大长度
+
+typedef struct {
+    ElemType data[MAXSIZE];  // 数组，存储数据元素
+    int length;             // 当前长度
+} SqList;
+\end{verbatim}
+
+\paragraph{动态分配}
+在C语言中，可以用指针和动态内存分配来实现顺序表的动态分配：
+
+\begin{verbatim}
+typedef struct {
+    ElemType *data;  // 指向动态分配数组的指针
+    int maxSize;     // 顺序表的最大容量
+    int length;      // 顺序表的当前长度
+} SqList;
+\end{verbatim}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \draw (0,0) rectangle (8,1);
+    \foreach \x in {1,2,...,7}
+    \draw (\x,0) -- (\x,1);
+    \node at (0.5,0.5) {$a_1$};
+    \node at (1.5,0.5) {$a_2$};
+    \node at (2.5,0.5) {$a_3$};
+    \node at (3.5,0.5) {$a_4$};
+    \node at (4.5,0.5) {$a_5$};
+    \node at (5.5,0.5) {$a_6$};
+    \node at (6.5,0.5) {$a_7$};
+    \node at (7.5,0.5) {$a_8$};
+    \node at (0,-0.3) {0};
+    \node at (1,-0.3) {1};
+    \node at (2,-0.3) {2};
+    \node at (3,-0.3) {3};
+    \node at (4,-0.3) {4};
+    \node at (5,-0.3) {5};
+    \node at (6,-0.3) {6};
+    \node at (7,-0.3) {7};
+
+    \draw[->] (-0.5,0.5) -- (0,0.5);
+    \node at (-1,0.5) {base};
+  \end{tikzpicture}
+  \caption{顺序表的存储结构}
+\end{figure}
+
+\subsubsection{顺序表的基本运算}
+
+\paragraph{顺序表的初始化}
+\begin{verbatim}
+Status InitList_Sq(SqList &L) {
+    // 为顺序表分配一个大小为MAXSIZE的数组空间
+    L.data = new ElemType[MAXSIZE];
+    if (!L.data) return ERROR;  // 存储分配失败
+    L.length = 0;               // 空表长度为0
+    L.maxSize = MAXSIZE;        // 最大长度为MAXSIZE
+    return OK;
+}
+\end{verbatim}
+
+\paragraph{顺序表的取值}
+根据位置$i$获取相应位置数据元素$e$的值，时间复杂度为$O(1)$。
+
+\begin{verbatim}
+Status GetElem_Sq(SqList L, int i, ElemType &e) {
+    if (i < 1 || i > L.length) return ERROR;  // i值不合法
+    e = L.data[i-1];                          // 第i-1个单元存储第i个元素
+    return OK;
+}
+\end{verbatim}
+
+\paragraph{顺序表的查找}
+在顺序表L中查找值为e的元素，若找到，则返回其位序；否则，返回0。
+
+\begin{verbatim}
+int LocateElem_Sq(SqList L, ElemType e) {
+    for (int i = 0; i < L.length; i++)
+        if (L.data[i] == e) return i+1;  // 返回位序
+    return 0;  // 查找失败，返回0
+}
+\end{verbatim}
+
+顺序查找的平均时间复杂度为$O(n)$。
+
+\paragraph{顺序表的插入}
+在顺序表L的第i个位置插入新元素e。
+
+\begin{verbatim}
+Status ListInsert_Sq(SqList &L, int i, ElemType e) {
+    if (i < 1 || i > L.length + 1) return ERROR;  // i值不合法
+    if (L.length >= L.maxSize) return ERROR;      // 当前存储空间已满
+
+    // 将第i个位置后的元素向后移动
+    for (int j = L.length; j >= i; j--)
+        L.data[j] = L.data[j-1];
+
+    L.data[i-1] = e;  // 插入新元素
+    L.length++;       // 表长增加1
+    return OK;
+}
+\end{verbatim}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 原始顺序表
+    \draw (0,2) rectangle (6,3);
+    \foreach \x in {1,2,3,4,5}
+    \draw (\x,2) -- (\x,3);
+    \node at (0.5,2.5) {$a_1$};
+    \node at (1.5,2.5) {$a_2$};
+    \node at (2.5,2.5) {$a_3$};
+    \node at (3.5,2.5) {$a_4$};
+    \node at (4.5,2.5) {$a_5$};
+    \node at (5.5,2.5) {$a_6$};
+
+    % 插入后
+    \draw (0,0) rectangle (7,1);
+    \foreach \x in {1,2,3,4,5,6}
+    \draw (\x,0) -- (\x,1);
+    \node at (0.5,0.5) {$a_1$};
+    \node at (1.5,0.5) {$a_2$};
+    \node at (2.5,0.5) {$e$};
+    \node at (3.5,0.5) {$a_3$};
+    \node at (4.5,0.5) {$a_4$};
+    \node at (5.5,0.5) {$a_5$};
+    \node at (6.5,0.5) {$a_6$};
+
+    % 箭头和说明
+    \draw[->] (2.5,1.5) -- (2.5,1);
+    \node at (3.3,1.5) {插入到第3个位置};
+  \end{tikzpicture}
+  \caption{顺序表的插入操作示意图}
+\end{figure}
+
+顺序表插入操作的时间复杂度分析：
+\begin{itemize}
+  \item 最好情况：插入到表尾，无需移动元素，时间复杂度为$O(1)$。
+  \item 最坏情况：插入到表头，需要移动所有元素，时间复杂度为$O(n)$。
+  \item 平均情况：假设插入位置均匀分布，平均需要移动$n/2$个元素，时间复杂度为$O(n)$。
+\end{itemize}
+
+\paragraph{顺序表的删除}
+删除顺序表L中第i个元素，并用e返回其值。
+
+\begin{verbatim}
+Status ListDelete_Sq(SqList &L, int i, ElemType &e) {
+    if (i < 1 || i > L.length) return ERROR;  // i值不合法
+
+    e = L.data[i-1];  // 保存被删除元素
+
+    // 将第i个位置后的元素向前移动
+    for (int j = i; j < L.length; j++)
+        L.data[j-1] = L.data[j];
+
+    L.length--;       // 表长减少1
+    return OK;
+}
+\end{verbatim}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 原始顺序表
+    \draw (0,2) rectangle (6,3);
+    \foreach \x in {1,2,3,4,5}
+    \draw (\x,2) -- (\x,3);
+    \node at (0.5,2.5) {$a_1$};
+    \node at (1.5,2.5) {$a_2$};
+    \node at (2.5,2.5) {$a_3$};
+    \node at (3.5,2.5) {$a_4$};
+    \node at (4.5,2.5) {$a_5$};
+    \node at (5.5,2.5) {$a_6$};
+
+    % 删除后
+    \draw (0,0) rectangle (5,1);
+    \foreach \x in {1,2,3,4}
+    \draw (\x,0) -- (\x,1);
+    \node at (0.5,0.5) {$a_1$};
+    \node at (1.5,0.5) {$a_2$};
+    \node at (2.5,0.5) {$a_4$};
+    \node at (3.5,0.5) {$a_5$};
+    \node at (4.5,0.5) {$a_6$};
+
+    % 箭头和说明
+    \draw[->] (2.5,2) -- (2.5,1.5);
+    \node at (3.3,1.5) {删除第3个元素};
+  \end{tikzpicture}
+  \caption{顺序表的删除操作示意图}
+\end{figure}
+
+顺序表删除操作的时间复杂度分析：
+\begin{itemize}
+  \item 最好情况：删除表尾元素，无需移动元素，时间复杂度为$O(1)$。
+  \item 最坏情况：删除表头元素，需要移动所有元素，时间复杂度为$O(n)$。
+  \item 平均情况：假设删除位置均匀分布，平均需要移动$(n-1)/2$个元素，时间复杂度为$O(n)$。
+\end{itemize}
+
+\paragraph{顺序表的排序}
+常用的排序算法包括冒泡排序、选择排序、插入排序、希尔排序、快速排序、堆排序、归并排序等。
+
+以冒泡排序为例：
+\begin{verbatim}
+void BubbleSort(SqList &L) {
+    for (int i = 0; i < L.length - 1; i++) {
+        bool flag = false;  // 标记本轮是否有交换
+        for (int j = 0; j < L.length - 1 - i; j++) {
+            if (L.data[j] > L.data[j+1]) {  // 相邻元素比较
+                // 交换元素
+                ElemType temp = L.data[j];
+                L.data[j] = L.data[j+1];
+                L.data[j+1] = temp;
+                flag = true;  // 本轮有交换
+            }
+        }
+        if (!flag) break;  // 本轮无交换，说明已经有序
+    }
+}
+\end{verbatim}
+
+\subsection{线性表的链式表示}
+
+\subsubsection{链表的基本概念}
+\begin{itemize}
+  \item \textbf{链表}是线性表的链式存储结构，它使用一组任意的存储单元来存储线性表中的数据元素。
+  \item 链表中的每个元素（称为结点）在存储数据的同时，还存储指向下一个结点的指针（或引用）。
+  \item 链表不要求逻辑上相邻的元素在物理位置上也相邻。
+  \item 优点：
+    \begin{enumerate}
+      \item 插入和删除操作不需要移动元素，时间复杂度为$O(1)$（不考虑查找时间）。
+      \item 充分利用计算机内存空间，不会出现内存浪费。
+    \end{enumerate}
+  \item 缺点：
+    \begin{enumerate}
+      \item 不支持随机访问，访问特定位置的元素需要$O(n)$的时间复杂度。
+      \item 需要额外的存储空间来存储指针信息。
+    \end{enumerate}
+\end{itemize}
+
+\subsubsection{单链表}
+
+\paragraph{单链表的节点结构}
+在C语言中，单链表的节点结构如下：
+
+\begin{verbatim}
+typedef struct LNode {
+    ElemType data;         // 数据域
+    struct LNode *next;    // 指针域，指向下一个节点
+} LNode, *LinkList;        // LinkList为指向LNode的指针类型
+\end{verbatim}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 头指针
+    \node[draw, rectangle] (head) at (0,0) {head};
+
+    % 节点
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (2,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (5,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (8,0) {};
+
+    % 节点内部
+    \draw (node1.center) -- (node1.east);
+    \draw (node2.center) -- (node2.east);
+    \draw (node3.center) -- (node3.east);
+
+    \node at (node1.west) [xshift=0.5cm] {$a_1$};
+    \node at (node2.west) [xshift=0.5cm] {$a_2$};
+    \node at (node3.west) [xshift=0.5cm] {$a_3$};
+
+    % 指针
+    \draw[->] (head) -- (node1);
+    \draw[->] (node1.east) -- (node2.west);
+    \draw[->] (node2.east) -- (node3.west);
+    \draw[->] (node3.east) -- (9.5,0);
+    \node at (10,0) {NULL};
+  \end{tikzpicture}
+  \caption{单链表示意图}
+\end{figure}
+
+\paragraph{单链表的创建方式}
+
+1. 头插法（逆序建立）
+\begin{verbatim}
+LinkList CreateList_H() {
+    LinkList L = (LinkList)malloc(sizeof(LNode));  // 创建头节点
+    L->next = NULL;                                // 初始为空链表
+
+    int n;
+    printf("请输入元素个数：");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        LinkList p = (LinkList)malloc(sizeof(LNode));  // 创建新节点
+        scanf("%d", &(p->data));                       // 输入元素值
+        p->next = L->next;   // 将新节点插入表头
+        L->next = p;
+    }
+
+    return L;
+}
+\end{verbatim}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 头节点
+    \node[draw, circle] (head) at (0,0) {L};
+
+    % 初始状态
+    \draw[->] (head) -- (1,0);
+    \node at (1.5,0) {NULL};
+
+    % 加入第一个节点
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (4,3) {};
+    \draw (node1.center) -- (node1.east);
+    \node at (4,3.5) {新节点p};
+    \node at (node1.west) [xshift=0.5cm] {$a_1$};
+    \draw[->] (node1.east) -- (5.5,3);
+    \node at (6,3) {NULL};
+
+    \draw[->, dashed] (node1.east) -- (1,0.3);
+    \draw[->, dashed] (head) -- (3,3);
+
+    % 加入第二个节点
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (4,1.5) {};
+    \draw (node2.center) -- (node2.east);
+    \node at (4,2) {新节点p};
+    \node at (node2.west) [xshift=0.5cm] {$a_2$};
+
+    \draw[->, dashed] (node2.east) -- (node1.west);
+    \draw[->, dashed] (head) -- (3,1.5);
+
+    % 最终结果
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result1) at (4,0) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result2) at (7,0) {};
+
+    \draw (result1.center) -- (result1.east);
+    \draw (result2.center) -- (result2.east);
+
+    \node at (result1.west) [xshift=0.5cm] {$a_2$};
+    \node at (result2.west) [xshift=0.5cm] {$a_1$};
+
+    \draw[->] (head) -- (result1);
+    \draw[->] (result1.east) -- (result2.west);
+    \draw[->] (result2.east) -- (8.5,0);
+    \node at (9,0) {NULL};
+  \end{tikzpicture}
+  \caption{单链表头插法示意图}
+\end{figure}
+
+2. 尾插法（正序建立）
+\begin{verbatim}
+LinkList CreateList_T() {
+    LinkList L = (LinkList)malloc(sizeof(LNode));  // 创建头节点
+    L->next = NULL;                                // 初始为空链表
+    LNode *r = L;                                  // r指向尾节点，初始时指向头节点
+
+    int n;
+    printf("请输入元素个数：");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        LinkList p = (LinkList)malloc(sizeof(LNode));  // 创建新节点
+        scanf("%d", &(p->data));                       // 输入元素值
+        p->next = NULL;      // 新节点暂时是尾节点
+        r->next = p;         // 将新节点插入到尾节点之后
+        r = p;               // r指向新的尾节点
+    }
+
+    return L;
+}
+\end{verbatim}
+
+\paragraph{单链表的基本操作}
+
+1. 获取链表长度
+\begin{verbatim}
+int GetLength(LinkList L) {
+    int length = 0;
+    LinkList p = L->next;  // 从第一个节点开始
+
+    while (p) {
+        length++;
+        p = p->next;
+    }
+
+    return length;
+}
+\end{verbatim}
+
+2. 按位置查找节点
+\begin{verbatim}
+LNode* GetElem(LinkList L, int i) {
+    if (i < 0) return NULL;  // i不合法
+
+    int j = 0;
+    LinkList p = L;  // 从头节点开始，j=0表示头节点
+
+    while (p && j < i) {
+        p = p->next;
+        j++;
+    }
+
+    return p;  // 返回第i个节点
+}
+\end{verbatim}
+
+3. 按值查找节点
+\begin{verbatim}
+LNode* LocateElem(LinkList L, ElemType e) {
+    LinkList p = L->next;  // 从第一个节点开始
+
+    while (p && p->data != e)
+        p = p->next;
+
+    return p;  // 找到返回节点指针，否则返回NULL
+}
+\end{verbatim}
+
+4. 插入节点
+在第i个位置插入值为e的新节点。
+
+\begin{verbatim}
+Status ListInsert(LinkList &L, int i, ElemType e) {
+    LinkList p = GetElem(L, i-1);  // 查找第i-1个节点
+    if (!p) return ERROR;          // i-1位置不存在
+
+    LinkList s = (LinkList)malloc(sizeof(LNode));  // 创建新节点
+    s->data = e;                                  // 赋值
+
+    s->next = p->next;  // 新节点指向原第i个节点
+    p->next = s;        // 第i-1个节点指向新节点
+
+    return OK;
+}
+\end{verbatim}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 原始链表
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (0,2) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (3,2) {};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (6,2) {};
+
+    \draw (node1.center) -- (node1.east);
+    \draw (node2.center) -- (node2.east);
+    \draw (node3.center) -- (node3.east);
+
+    \node at (node1.west) [xshift=0.5cm] {$a_1$};
+    \node at (node2.west) [xshift=0.5cm] {$a_2$};
+    \node at (node3.west) [xshift=0.5cm] {$a_3$};
+
+    \draw[->] (node1.east) -- (node2.west);
+    \draw[->] (node2.east) -- (node3.west);
+    \draw[->] (node3.east) -- (7.5,2);
+    \node at (8,2) {NULL};
+
+    % 新节点
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (newnode) at (3,0) {};
+    \draw (newnode.center) -- (newnode.east);
+    \node at (newnode.west) [xshift=0.5cm] {$e$};
+    \node at (3,-0.5) {新节点};
+
+    % 插入后的链表
+    \draw[->, dashed] (newnode.east) -- (node3.west);
+    \draw[->, dashed] (node2.east) -- (newnode.west);
+  \end{tikzpicture}
+  \caption{单链表的插入操作}
+\end{figure}
+
+5. 删除节点
+删除第i个节点。
+
+\begin{verbatim}
+Status ListDelete(LinkList &L, int i, ElemType &e) {
+    LinkList p = GetElem(L, i-1);  // 查找第i-1个节点
+    if (!p || !p->next) return ERROR;  // i-1位置不存在或第i个节点不存在
+
+    LinkList q = p->next;    // q指向待删除节点
+    e = q->data;            // 保存被删除节点的值
+
+    p->next = q->next;      // 第i-1个节点指向第i+1个节点
+    free(q);                // 释放被删除节点的空间
+
+    return OK;
+}
+\end{verbatim}
+
 \end{document}
