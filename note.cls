@@ -39,7 +39,7 @@
 {\normalfont\Large\bfseries}{\thesection}{1em}{}
 
 % Settings specific to report
-\geometry{margin=0.5in, paperheight=11in, paperwidth=8.5in} % Set paper size
+\geometry{margin=1in, paperheight=11in, paperwidth=8.5in} % Standard letter size with normal margins
 
 \renewcommand{\maketitle}{
   \begin{center}
