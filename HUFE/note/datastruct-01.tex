@@ -4,6 +4,9 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \newtheorem{example}{Example}
+\usepackage{xcolor} % For colored text
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,fit,calc,matrix}
 
 \title{数据结构 01}
 \author{isomo}
@@ -12,1515 +15,688 @@
 
 \maketitle
 
+考纲内容：
+
+\begin{itemize}
+  \item \textbf{绪论: }
+    数据、数据元素、数据结构、数据类型、抽象数据类型的概念，数据的逻辑结构和存储结构，算法、算法描述和算法分析的概念。
+
+  \item \textbf{线性表: }
+    线性表的定义及其抽象数据类型描述，顺序表的逻辑结构定义及其基本运算，链表的逻辑结构及其基本操作。
+\end{itemize}
+
 \section{绪论}
 
-\subsection{引言}
-数据结构是计算机科学中的一门基础课程，它研究数据的组织方式及其操作，对于程序设计、算法设计和计算机系统设计都有着重要的影响。本章将介绍数据结构的基本概念，包括数据、数据元素、数据结构、数据类型、抽象数据类型等，同时也会讨论算法及其分析方法。
-
-\subsection{数据及相关概念}
-
-\subsubsection{数据的概念}
-\begin{itemize}
-  \item \textbf{数据}（Data）：是对客观事物的符号表示，在计算机科学中，是指所有能输入到计算机中并被计算机程序处理的符号的总称。
-  \item 数据是计算机程序加工的原料，是信息的载体。
-  \item 数据可以是数值型（如1, 2, 3.14等）、文本型（如"Hello"）、图形型、音频型等多种形式。
-\end{itemize}
-
-\begin{example}
-  学生信息系统中的学生姓名、学号、成绩等都是数据。
-  天气预报系统中的温度、湿度、气压等也是数据。
-\end{example}
-
-\subsubsection{数据元素的概念}
-\begin{itemize}
-  \item \textbf{数据元素}（Data Element）：是数据的基本单位，通常作为一个整体进行考虑。
-  \item 也称为记录（Record）、节点（Node）或实体（Entity）。
-  \item 一个数据元素可由若干个数据项（Data Item）组成。
-\end{itemize}
-
-\begin{example}
-  在学生信息系统中，每个学生的完整信息（包括姓名、学号、成绩等）构成一个数据元素。
-  在图书管理系统中，每本书的信息（包括书名、作者、ISBN等）是一个数据元素。
-\end{example}
-
-\subsubsection{数据项的概念}
-\begin{itemize}
-  \item \textbf{数据项}（Data Item）：是数据的最小单位，是不可分割的基本单位。
-  \item 数据项是组成数据元素的基本单位。
-\end{itemize}
-
-\begin{example}
-  学生信息中的姓名是一个数据项，学号是一个数据项，成绩是一个数据项。
-\end{example}
-
-\subsection{数据结构}
-
-\subsubsection{数据结构的定义}
-\begin{itemize}
-  \item \textbf{数据结构}（Data Structure）：是相互之间存在一种或多种特定关系的数据元素的集合。
-  \item 数据结构包括三个方面：
-    \begin{enumerate}
-      \item 数据的逻辑结构
-      \item 数据的存储结构（物理结构）
-      \item 数据的操作
-    \end{enumerate}
-\end{itemize}
-
-\subsubsection{数据的逻辑结构}
-\begin{itemize}
-  \item \textbf{逻辑结构}（Logical Structure）：指数据元素之间的逻辑关系，与数据的存储无关。
-  \item 主要分为以下四类：
-    \begin{enumerate}
-      \item \textbf{线性结构}：元素之间是一对一的关系。如线性表、栈、队列等。
-      \item \textbf{树形结构}：元素之间是一对多的关系。如树、二叉树等。
-      \item \textbf{图形结构}：元素之间是多对多的关系。如图、网络等。
-      \item \textbf{集合结构}：元素之间除了同属一个集合外，没有其他关系。
-    \end{enumerate}
-\end{itemize}
-
-\begin{figure}[h]
+% Adding a figure showing the relationship between key concepts
+\begin{figure}[ht]
   \centering
-  \begin{tikzpicture}
-    \node[draw, rectangle] (a) at (0,0) {逻辑结构};
-    \node[draw, rectangle] (b1) at (-3,-1.5) {线性结构};
-    \node[draw, rectangle] (b2) at (-1,-1.5) {树形结构};
-    \node[draw, rectangle] (b3) at (1,-1.5) {图形结构};
-    \node[draw, rectangle] (b4) at (3,-1.5) {集合结构};
+  \begin{tikzpicture}[
+      node distance=1.5cm and 2cm,
+      box/.style={draw, rounded corners, minimum width=2.5cm, minimum height=1cm, align=center, fill=lightgray!20},
+      arrow/.style={->,>=stealth, thick}
+    ]
+    % Main concepts
+    \node[box, fill=red!10] (data) {数据\\Data};
+    \node[box, fill=red!10, below=of data] (dataelem) {数据元素\\Data Element};
+    \node[box, fill=red!10, below=of dataelem] (datast) {数据结构\\Data Structure};
+    \node[box, fill=blue!10, below left=of datast] (datatype) {数据类型\\Data Type};
+    \node[box, fill=blue!10, below right=of datast] (ADT) {抽象数据类型\\ADT};
 
-    \draw[->] (a) -- (b1);
-    \draw[->] (a) -- (b2);
-    \draw[->] (a) -- (b3);
-    \draw[->] (a) -- (b4);
+    % Arrows
+    \draw[arrow] (data) -- (dataelem) node[midway, right] {组成};
+    \draw[arrow] (dataelem) -- (datast) node[midway, right] {形成};
+    \draw[arrow] (datast) -- (datatype);
+    \draw[arrow] (datatype) -- (ADT) node[midway, above] {抽象化};
   \end{tikzpicture}
-  \caption{数据的逻辑结构分类}
+  \caption{数据结构基本概念关系图}
 \end{figure}
 
-\subsubsection{数据的存储结构}
-\begin{itemize}
-  \item \textbf{存储结构}（Storage Structure）：指数据在计算机中的表示（又称物理结构）。
-  \item 存储结构是逻辑结构在计算机中的映射，通过存储单元之间的邻接关系来反映数据元素之间的逻辑关系。
-  \item 主要分为以下四类：
-    \begin{enumerate}
-      \item \textbf{顺序存储结构}：使用一组地址连续的存储单元依次存储数据元素。
-      \item \textbf{链式存储结构}：使用一组任意的存储单元存储数据元素，每个元素还存储指向相关元素的指针。
-      \item \textbf{索引存储结构}：在存储数据的同时，建立附加的索引表，以便快速访问。
-      \item \textbf{散列存储结构}：根据数据元素的关键字直接计算其存储地址。
-    \end{enumerate}
-\end{itemize}
+\subsection{基本概念}
 
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-    \node[draw, rectangle] (a) at (0,0) {存储结构};
-    \node[draw, rectangle] (b1) at (-3,-1.5) {顺序存储};
-    \node[draw, rectangle] (b2) at (-1,-1.5) {链式存储};
-    \node[draw, rectangle] (b3) at (1,-1.5) {索引存储};
-    \node[draw, rectangle] (b4) at (3,-1.5) {散列存储};
+\subsubsection{数据}
+\textcolor{red}{数据（Data）}是对客观事物的符号表示，是信息的载体，是计算机程序加工的对象。数据是计算机科学研究的基本对象，也是计算机处理的对象。
 
-    \draw[->] (a) -- (b1);
-    \draw[->] (a) -- (b2);
-    \draw[->] (a) -- (b3);
-    \draw[->] (a) -- (b4);
-  \end{tikzpicture}
-  \caption{数据的存储结构分类}
-\end{figure}
+\subsubsection{数据元素}
+\textcolor{red}{数据元素（Data Element）}是数据的基本单位，是数据集合中的一个客体，也称为记录。数据元素通常由若干个数据项组成，每个数据项是数据元素的一个最小单位，也称为字段。
 
-\subsection{数据类型与抽象数据类型}
+\subsubsection{数据结构}
+\textcolor{red}{数据结构（Data Structure）}是指相互之间存在一种或多种特定关系的数据元素的集合。一个数据结构包括三个方面：
+\begin{enumerate}
+  \item 数据的逻辑结构
+  \item 数据的存储结构
+  \item 数据的操作
+\end{enumerate}
 
 \subsubsection{数据类型}
-\begin{itemize}
-  \item \textbf{数据类型}（Data Type）：是一组性质相同的值的集合及定义在此集合上的一组操作的总称。
-  \item 数据类型可以分为两类：
-    \begin{enumerate}
-      \item \textbf{原子类型}（基本类型）：不可再分的类型，如整数、实数、字符等。
-      \item \textbf{结构类型}：由多个类型组合而成，如数组、结构体等。
-    \end{enumerate}
-  \item 在编程语言中，声明变量时必须指定数据类型，如int、float、char等。
-\end{itemize}
+\textcolor{red}{数据类型（Data Type）}是指一组性质相同的值的集合及定义在此集合上的一组操作的总称。数据类型可分为基本数据类型（如整型、实型、字符型等）和结构化数据类型（如数组、记录、文件等）。
 
 \subsubsection{抽象数据类型}
-\begin{itemize}
-  \item \textbf{抽象数据类型}（Abstract Data Type, ADT）：是一个数学模型及定义在该模型上的一组操作，它与存储结构的实现无关。
-  \item ADT由两部分组成：
-    \begin{enumerate}
-      \item 数据对象的抽象描述
-      \item 对数据对象的操作的抽象描述
-    \end{enumerate}
-  \item ADT的表示方法：
-    \begin{verbatim}
-    ADT 抽象数据类型名 {
-        数据对象: <数据对象的定义>
-        数据关系: <数据关系的定义>
-        基本操作: <基本操作的定义>
-    }
-    \end{verbatim}
-\end{itemize}
+\textcolor{red}{抽象数据类型（Abstract Data Type, ADT）}是指一个数学模型以及定义在该模型上的一组操作。抽象数据类型把数据类型的逻辑特性与其实现细节分离，使用ADT来描述数据结构时只需关注其逻辑特性，而不必关心其具体实现。
 
-\begin{example}[抽象数据类型示例]
-  以"线性表"为例，其ADT可表示为：
-\begin{verbatim}
-ADT List {
-    数据对象:
-        D = {a_i | a_i ∈ ElemSet, i = 1, 2, ..., n, n ≥ 0}
-    数据关系:
-        R = {<a_i, a_{i+1}> | a_i, a_{i+1} ∈ D, i = 1, 2, ..., n-1}
-    基本操作:
-        InitList(&L)   // 初始化线性表
-        Length(L)      // 求表长
-        GetElem(L, i, &e)  // 获取第i个元素
-        LocateElem(L, e)   // 查找元素e的位置
-        Insert(&L, i, e)   // 在位置i插入元素e
-        Delete(&L, i, &e)  // 删除位置i的元素
-        ...
-}
-\end{verbatim}
-\end{example}
+\subsection{数据的结构}
 
-\subsection{算法及其分析}
+% Adding a figure for data structures
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[
+      node distance=1.5cm,
+      box/.style={draw, rounded corners, minimum width=2.5cm, minimum height=0.8cm, align=center},
+      arrow/.style={->,>=stealth, thick}
+    ]
+    % Main division
+    \node[box, fill=yellow!20] (datastruct) {数据结构};
+
+    \node[box, fill=blue!10, below left=1cm and 2cm of datastruct] (logical) {逻辑结构};
+    \node[box, fill=red!10, below right=1cm and 2cm of datastruct] (storage) {存储结构};
+
+    % Logical structures
+    \node[box, below left=0.8cm and 0.3cm of logical] (set) {集合结构};
+    \node[box, below=0.8cm of logical] (linear) {线性结构};
+    \node[box, below right=0.8cm and 0.3cm of logical] (tree) {树形结构};
+    \node[box, below=0.8cm of tree] (graph) {图形结构};
+
+    % Storage structures
+    \node[box, below left=0.8cm and 0.3cm of storage] (seq) {顺序存储};
+    \node[box, below=0.8cm of storage] (linked) {链式存储};
+    \node[box, below right=0.8cm and 0.3cm of storage] (indexed) {索引存储};
+    \node[box, below=0.8cm of indexed] (hash) {散列存储};
+
+    % Arrows
+    \draw[arrow] (datastruct) -- (logical);
+    \draw[arrow] (datastruct) -- (storage);
+    \draw[arrow] (logical) -- (set);
+    \draw[arrow] (logical) -- (linear);
+    \draw[arrow] (logical) -- (tree);
+    \draw[arrow] (logical) -- (graph);
+    \draw[arrow] (storage) -- (seq);
+    \draw[arrow] (storage) -- (linked);
+    \draw[arrow] (storage) -- (indexed);
+    \draw[arrow] (storage) -- (hash);
+  \end{tikzpicture}
+  \caption{数据结构的分类}
+\end{figure}
+
+\subsubsection{数据的逻辑结构}
+\textcolor{red}{逻辑结构（Logical Structure）}是指数据元素之间的逻辑关系，与数据的存储无关。主要分为以下四类：
+
+% Visualizing logical structures
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[scale=0.8]
+    % Set structure
+    \begin{scope}[local bounding box=set, shift={(-5,0)}]
+      \draw (0,0) circle (1.5);
+      \foreach \i in {0,72,...,288}
+      \filldraw (\i:1) circle (0.1);
+      \node[below=0.5cm] at (0,-1.5) {集合结构};
+    \end{scope}
+
+    % Linear structure
+    \begin{scope}[local bounding box=linear, shift={(0,0)}]
+      \foreach \i in {0,...,4} {
+        \filldraw (\i,0) circle (0.1);
+        \ifnum\i<4
+        \draw[->] (\i+0.1,0) -- (\i+0.9,0);
+        \fi
+      }
+      \node[below=0.5cm] at (2,-0.1) {线性结构};
+    \end{scope}
+
+    % Tree structure
+    \begin{scope}[local bounding box=tree, shift={(-3,-4)}]
+      \filldraw (0,0) circle (0.1) node (root) {};
+      \foreach \i in {-1,0,1} {
+        \filldraw (\i,-1) circle (0.1) node (level1_\i) {};
+        \draw[->] (root) -- (level1_\i);
+      }
+      \foreach \i/\pos in {1/-1.5, 2/-1, 3/-0.5, 4/0.5, 5/1, 6/1.5} {
+        \filldraw (\pos,-2) circle (0.1) node (level2_\i) {};
+      }
+      \draw[->] (level1_-1) -- (level2_1);
+      \draw[->] (level1_-1) -- (level2_2);
+      \draw[->] (level1_0) -- (level2_3);
+      \draw[->] (level1_0) -- (level2_4);
+      \draw[->] (level1_1) -- (level2_5);
+      \draw[->] (level1_1) -- (level2_6);
+      \node[below=0.5cm] at (0,-2.2) {树形结构};
+    \end{scope}
+
+    % Graph structure
+    \begin{scope}[local bounding box=graph, shift={(3,-4)}]
+      \foreach \i/\x/\y in {1/0/0, 2/2/0, 3/3/1.5, 4/1/2, 5/-1/1.5} {
+        \filldraw (\x,\y) circle (0.1) node (n\i) {};
+      }
+      \draw[->] (n1) -- (n2);
+      \draw[->] (n2) -- (n3);
+      \draw[->] (n3) -- (n4);
+      \draw[->] (n4) -- (n5);
+      \draw[->] (n5) -- (n1);
+      \draw[->] (n1) -- (n4);
+      \draw[->] (n2) -- (n5);
+      \node[below=0.5cm] at (1,0) {图形结构};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{数据的逻辑结构示意图}
+\end{figure}
+
+\begin{enumerate}
+  \item 集合结构：数据元素之间除了同属一个集合外，无其他关系
+  \item 线性结构：数据元素之间存在一对一的线性关系
+  \item 树形结构：数据元素之间存在一对多的层次关系
+  \item 图形结构：数据元素之间存在多对多的任意关系
+\end{enumerate}
+
+\subsubsection{数据的存储结构}
+\textcolor{red}{存储结构（Storage Structure）}是指数据结构在计算机中的表示，也称为物理结构。主要分为以下四类：
+
+% Visualizing storage structures
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[scale=0.8]
+    % Sequential storage
+    \begin{scope}[local bounding box=seq, shift={(-4,0)}]
+      \foreach \i in {0,...,4} {
+        \draw (\i,0) rectangle ++(1,1);
+        \node at (\i+0.5,0.5) {$a_\i$};
+      }
+      \node[below=0.5cm] at (2.5,0) {顺序存储};
+    \end{scope}
+
+    % Linked storage
+    \begin{scope}[local bounding box=linked, shift={(3,-2)}]
+      % First define all coordinates
+      \foreach \i/\x/\y in {0/0/0, 1/2/0, 2/4/0, 3/3/1.5, 4/1/1.5} {
+        \coordinate (n\i) at (\x,\y);
+      }
+
+      % Then draw the nodes and connections
+      \foreach \i/\x/\y in {0/0/0, 1/2/0, 2/4/0, 3/3/1.5, 4/1/1.5} {
+        \draw (\x,\y) rectangle ++(1,1);
+        \draw (\x+0.5,\y) -- ++(0,1);
+        \node at (\x+0.25,\y+0.5) {$a_\i$};
+
+        \ifnum\i<4
+        \node at (\x+0.75,\y+0.5) {$\bullet$};
+        \draw[->, thick] (\x+0.75,\y+0.5) to[out=0,in=180] ([shift={(0,0.5)}]n\number\numexpr\i+1);
+        \else
+        \node at (\x+0.75,\y+0.5) {$\emptyset$};
+        \fi
+      }
+      \node[below=0.5cm] at (2.5,0) {链式存储};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{顺序存储与链式存储结构示意图}
+\end{figure}
+
+\begin{enumerate}
+  \item 顺序存储：将数据元素存储在地址连续的存储单元中
+  \item 链式存储：将数据元素存储在任意的存储单元中，通过指针来表示元素之间的逻辑关系
+  \item 索引存储：在存储元素信息的同时，还建立附加的索引表
+  \item 散列存储：根据数据元素的关键字直接计算出该元素的存储地址
+\end{enumerate}
+
+\subsection{算法}
 
 \subsubsection{算法的概念}
-\begin{itemize}
-  \item \textbf{算法}（Algorithm）：是解决特定问题的一系列操作的有限序列。
-  \item 算法的五个基本特性：
-    \begin{enumerate}
-      \item \textbf{有穷性}：算法必须在有限步骤内结束。
-      \item \textbf{确定性}：算法的每一步骤必须有确定的含义，不能有歧义。
-      \item \textbf{可行性}：算法的每一步操作都必须是可行的，即能够通过已经实现的基本操作执行有限次来实现。
-      \item \textbf{输入}：算法可以有零个或多个输入。
-      \item \textbf{输出}：算法必须有一个或多个输出。
-    \end{enumerate}
-\end{itemize}
+\textcolor{red}{算法（Algorithm）}是对特定问题求解步骤的一种描述，是一组有穷的、确定的、可行的指令序列。算法具有五个基本特性：
 
-\subsubsection{算法的描述}
-算法可以通过多种方式描述：
+% Algorithm characteristics visualization
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}
+    \node[draw, rounded corners, fill=yellow!20, minimum width=3cm, minimum height=1cm] (algo) at (0,0) {算法};
+
+    \foreach \i/\name/\angle in {
+      1/有穷性/90,
+      2/确定性/162,
+      3/可行性/234,
+      4/输入/306,
+      5/输出/18
+    } {
+      \node[draw, rounded corners, fill=blue!10, minimum width=2cm, minimum height=0.8cm] (char\i) at (\angle:3.5cm) {\name};
+      \draw[->, thick] (algo) -- (char\i);
+    }
+  \end{tikzpicture}
+  \caption{算法的五个基本特性}
+\end{figure}
+
 \begin{enumerate}
-  \item \textbf{自然语言}：使用日常语言描述算法步骤。
-  \item \textbf{流程图}：使用图形符号表示算法的流程。
-  \item \textbf{伪代码}：介于自然语言和程序设计语言之间的描述方式。
-  \item \textbf{程序设计语言}：如C、Java等。
+  \item 有穷性：算法必须在有限的步骤后终止
+  \item 确定性：每一步骤都有明确的定义
+  \item 可行性：每一步操作都是可以实现的
+  \item 输入：有零个或多个输入
+  \item 输出：有一个或多个输出
 \end{enumerate}
 
-\begin{example}[简单算法示例：顺序查找]
-  伪代码描述：
-\begin{verbatim}
-Algorithm SequentialSearch(A[0...n-1], key):
-    i = 0
-    while i < n and A[i] != key do
-        i = i + 1
-    if i < n then
-        return i  // 找到元素，返回位置
-    else
-        return -1 // 未找到元素，返回-1
-\end{verbatim}
-\end{example}
-
-\subsubsection{算法的分析}
-算法分析的两个主要方面：
+\subsubsection{算法描述}
+算法描述是对算法进行表达的方式，常用的描述方法包括：
 \begin{enumerate}
-  \item \textbf{正确性分析}：证明算法是否能正确地解决问题。
-  \item \textbf{效率分析}：评估算法的时间复杂度和空间复杂度。
-    \begin{itemize}
-      \item \textbf{时间复杂度}：算法执行所需的时间。
-      \item \textbf{空间复杂度}：算法执行所需的存储空间。
-    \end{itemize}
+  \item 自然语言描述
+  \item 流程图描述
+  \item 伪代码描述
+  \item 程序语言描述
 \end{enumerate}
 
-\paragraph{渐进符号}
-用于表示算法时间复杂度的常用符号：
-\begin{itemize}
-  \item \textbf{O(大O)}：表示上界，如O(n²)表示算法的执行时间不超过n²的常数倍。
-  \item \textbf{Ω(大Omega)}：表示下界，如Ω(n)表示算法的执行时间至少是n的常数倍。
-  \item \textbf{Θ(大Theta)}：表示确界，如Θ(n)表示算法的执行时间恰好是n的常数倍。
-\end{itemize}
+\subsubsection{算法分析}
+\textcolor{red}{算法分析（Algorithm Analysis）}是指对算法的执行效率和所需资源进行评估和预测。主要包括：
 
-\paragraph{常见的时间复杂度}
-按照效率从高到低排序：
-\begin{itemize}
-  \item O(1)：常数时间，与输入规模无关。
-  \item O(log n)：对数时间，如二分查找。
-  \item O(n)：线性时间，如顺序查找。
-  \item O(n log n)：线性对数时间，如归并排序、快速排序。
-  \item O(n²)：平方时间，如冒泡排序、插入排序。
-  \item O(n³)：立方时间，如某些矩阵运算。
-  \item O($2^n$)：指数时间，如穷举法。
-\end{itemize}
-
-\begin{figure}[h]
+% Time complexity visualization
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}
     \begin{axis}[
-        domain=0:10,
-        samples=100,
-        axis lines=left,
-        xlabel={$n$},
-        ylabel={T(n)},
-        legend pos=north west,
         width=10cm,
-        height=7cm,
-        ymax=50,
+        height=6cm,
+        xlabel={问题规模 $n$},
+        ylabel={执行时间},
+        domain=1:10,
+        samples=100,
+        legend pos=north west,
+        legend style={font=\small},
+        grid=both,
+        ymin=0, ymax=100
       ]
-      \addplot[color=blue] {1};
+      \addplot[color=blue, thick] {1};
       \addlegendentry{$O(1)$}
 
-      \addplot[color=green] {ln(x+1)/ln(2)};
+      \addplot[color=green!60!black, thick] {ln(x)/ln(2)};
       \addlegendentry{$O(\log n)$}
 
-      \addplot[color=red] {x};
+      \addplot[color=orange, thick] {x};
       \addlegendentry{$O(n)$}
 
-      \addplot[color=violet] {x*ln(x+1)/ln(2)};
-      \addlegendentry{$O(n \log n)$}
+      \addplot[color=red, thick] {x*ln(x)/ln(2)};
+      \addlegendentry{$O(n\log n)$}
 
-      \addplot[color=orange] {x^2};
+      \addplot[color=purple, thick] {x^2};
       \addlegendentry{$O(n^2)$}
 
+      \addplot[color=brown, thick] {2^x};
+      \addlegendentry{$O(2^n)$}
     \end{axis}
   \end{tikzpicture}
-  \caption{常见时间复杂度函数的增长趋势}
+  \caption{常见时间复杂度增长率比较}
 \end{figure}
 
-\paragraph{算法效率分析实例}
-\begin{example}[顺序查找算法的时间复杂度分析]
-  顺序查找算法的最坏情况：要查找的元素在数组的最后或不存在，需要比较n次，时间复杂度为O(n)。
-  最好情况：要查找的元素在数组的第一个位置，只需比较1次，时间复杂度为O(1)。
-  平均情况：假设查找任意位置的概率相等，则平均需要比较(n+1)/2次，时间复杂度仍为O(n)。
-\end{example}
+\begin{enumerate}
+  \item 时间复杂度：评估算法执行所需的时间
+  \item 空间复杂度：评估算法执行所需的存储空间
+\end{enumerate}
 
-\subsection{数据结构的应用}
-
-数据结构在计算机科学和实际应用中具有广泛的应用：
-
-\begin{itemize}
-  \item \textbf{数据库系统}：利用各种数据结构组织和存储数据，实现高效的数据管理。
-  \item \textbf{操作系统}：利用队列管理进程，利用树结构管理文件系统等。
-  \item \textbf{编译器}：利用栈实现表达式求值，利用树结构表示语法分析等。
-  \item \textbf{搜索引擎}：利用倒排索引等数据结构实现高效的信息检索。
-  \item \textbf{图形处理}：利用图和树等结构描述图像和几何对象的关系。
-  \item \textbf{人工智能}：利用各种数据结构表示知识和实现搜索算法。
-\end{itemize}
-
-\subsection{本章小结}
-本章介绍了数据结构的基本概念，包括数据、数据元素、数据项、数据的逻辑结构和存储结构、数据类型和抽象数据类型等。同时，也讨论了算法的概念、算法的描述方法以及算法分析的基本方法，特别是时间复杂度和空间复杂度的概念和分析方法。这些基础知识是学习后续各种具体数据结构和算法的必要前提。
+时间复杂度通常用大O符号表示，常见的时间复杂度有：$O(1)$、$O(\log n)$、$O(n)$、$O(n\log n)$、$O(n^2)$、$O(n^3)$、$O(2^n)$等。
 
 \section{线性表}
 
-\subsection{线性表的基本概念}
-
-\subsubsection{线性表的定义}
-\begin{itemize}
-  \item \textbf{线性表}（Linear List）是具有相同数据类型的n个数据元素的有限序列。
-  \item 其中，n为表长度，当n=0时称为空表。
-  \item 线性表中元素的位序（Position）是从1开始的。
-  \item 若用$L$表示线性表，则记为：$L = (a_1, a_2, \ldots, a_n)$
-  \item 线性表中元素的特点：
-    \begin{enumerate}
-      \item 除第一个元素外，每个元素有且仅有一个直接前驱。
-      \item 除最后一个元素外，每个元素有且仅有一个直接后继。
-    \end{enumerate}
-\end{itemize}
-
-\begin{figure}[h]
+% Concept relationship diagram
+\begin{figure}[ht]
   \centering
-  \begin{tikzpicture}
-    \node[draw, rectangle] (a1) at (0,0) {$a_1$};
-    \node[draw, rectangle] (a2) at (1.5,0) {$a_2$};
-    \node[draw, rectangle] (a3) at (3,0) {$a_3$};
-    \node at (4.5,0) {$\cdots$};
-    \node[draw, rectangle] (an) at (6,0) {$a_n$};
+  \begin{tikzpicture}[
+      node distance=1.5cm and 2cm,
+      box/.style={draw, rounded corners, minimum width=2.5cm, minimum height=1cm, align=center, fill=lightgray!20},
+      arrow/.style={->,>=stealth, thick}
+    ]
+    % Main concepts
+    \node[box, fill=yellow!20] (linearlist) {线性表\\Linear List};
 
-    \draw[->] (a1) -- (a2);
-    \draw[->] (a2) -- (a3);
-    \draw[->] (a3) -- (3.7,0);
-    \draw[->] (5.3,0) -- (an);
+    % Storage implementations
+    \node[box, fill=red!10, below left=of linearlist] (seqlist) {顺序表\\Sequential List};
+    \node[box, fill=red!10, below right=of linearlist] (linkedlist) {链表\\Linked List};
+
+    % Linked list variants
+    \node[box, fill=blue!10, below left=1cm and 0cm of linkedlist] (singlelist) {单链表};
+    \node[box, fill=blue!10, below=1cm of linkedlist] (doublelist) {双链表};
+    \node[box, fill=blue!10, below right=1cm and 0cm of linkedlist] (circularlist) {循环链表};
+
+    % Arrows
+    \draw[arrow] (linearlist) -- (seqlist);
+    \draw[arrow] (linearlist) -- (linkedlist);
+    \draw[arrow] (linkedlist) -- (singlelist);
+    \draw[arrow] (linkedlist) -- (doublelist);
+    \draw[arrow] (linkedlist) -- (circularlist);
   \end{tikzpicture}
-  \caption{线性表的逻辑结构}
+  \caption{线性表的分类及关系}
 \end{figure}
 
-\subsubsection{线性表的抽象数据类型描述}
+\subsection{线性表的定义}
 
-线性表的抽象数据类型（ADT）描述如下：
-
-\begin{verbatim}
-ADT LinearList {
-    数据对象:
-        D = {a_i | a_i ∈ ElementSet, i = 1, 2, ..., n, n ≥ 0}
-    数据关系:
-        R = {<a_i, a_{i+1}> | a_i, a_{i+1} ∈ D, i = 1, 2, ..., n-1}
-    基本操作:
-        InitList(&L)            // 初始化线性表
-        DestroyList(&L)         // 销毁线性表
-        ClearList(&L)           // 清空线性表
-        ListEmpty(L)            // 判断线性表是否为空
-        ListLength(L)           // 获取线性表长度
-        GetElem(L, i, &e)       // 获取第i个元素
-        LocateElem(L, e, compare)  // 查找元素e
-        PriorElem(L, cur_e, &pre_e)  // 获取元素cur_e的前驱
-        NextElem(L, cur_e, &next_e)  // 获取元素cur_e的后继
-        ListInsert(&L, i, e)    // 在第i个位置插入元素e
-        ListDelete(&L, i, &e)   // 删除第i个元素
-        ListTraverse(L, visit)  // 遍历线性表
-}
-\end{verbatim}
-
-\subsection{线性表的顺序表示}
-
-\subsubsection{顺序表的定义}
+\textcolor{red}{线性表（Linear List）}是具有相同数据类型的n个数据元素的有限序列。其中：
 \begin{itemize}
-  \item \textbf{顺序表}是用一组地址连续的存储单元依次存储线性表中的数据元素，使得逻辑上相邻的两个元素在物理位置上也相邻。
-  \item 顺序表是线性表的顺序存储结构。
-  \item 优点：
-    \begin{enumerate}
-      \item 随机访问特性：可以在$O(1)$时间内访问任意位置的元素。
-      \item 无须为表中元素之间的逻辑关系增加额外的存储空间。
-    \end{enumerate}
-  \item 缺点：
-    \begin{enumerate}
-      \item 插入和删除操作需要移动大量元素，效率较低。
-      \item 存储空间需要预先分配，可能会出现内存浪费或溢出的情况。
-    \end{enumerate}
+  \item 数据元素的个数n定义为表的长度
+  \item 当n=0时称为空表
+  \item 表中任一元素所在位置后有且仅有一个直接后继元素
+  \item 表中除第一个元素外，任一元素有且仅有一个直接前驱元素
 \end{itemize}
 
-\subsubsection{顺序表的存储结构}
-
-\paragraph{静态分配}
-在C语言中，可以用数组来实现顺序表的静态分配：
-
-\begin{verbatim}
-#define MAXSIZE 100  // 顺序表的最大长度
-
-typedef struct {
-    ElemType data[MAXSIZE];  // 数组，存储数据元素
-    int length;             // 当前长度
-} SqList;
-\end{verbatim}
-
-\paragraph{动态分配}
-在C语言中，可以用指针和动态内存分配来实现顺序表的动态分配：
-
-\begin{verbatim}
-typedef struct {
-    ElemType *data;  // 指向动态分配数组的指针
-    int maxSize;     // 顺序表的最大容量
-    int length;      // 顺序表的当前长度
-} SqList;
-\end{verbatim}
-
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}
-    \draw (0,0) rectangle (8,1);
-    \foreach \x in {1,2,...,7}
-    \draw (\x,0) -- (\x,1);
-    \node at (0.5,0.5) {$a_1$};
-    \node at (1.5,0.5) {$a_2$};
-    \node at (2.5,0.5) {$a_3$};
-    \node at (3.5,0.5) {$a_4$};
-    \node at (4.5,0.5) {$a_5$};
-    \node at (5.5,0.5) {$a_6$};
-    \node at (6.5,0.5) {$a_7$};
-    \node at (7.5,0.5) {$a_8$};
-    \node at (0,-0.3) {0};
-    \node at (1,-0.3) {1};
-    \node at (2,-0.3) {2};
-    \node at (3,-0.3) {3};
-    \node at (4,-0.3) {4};
-    \node at (5,-0.3) {5};
-    \node at (6,-0.3) {6};
-    \node at (7,-0.3) {7};
+    % Draw elements
+    \foreach \i/
+  \item in {1/a_1, 2/a_2, 3/a_3, 4/a_4, 5/a_5, 6/a_n} {
+      \ifnum\i=6
+      \node[draw, circle, minimum size=1.2cm] (e\i) at (\i*1.5-1.5,0) {$
+    \item$};
+      \draw[dotted, thick] (e5) -- (e6);
+      \else
+      \node[draw, circle, minimum size=1.2cm] (e\i) at (\i*1.5-1.5,0) {$
+    \item$};
+      \fi
+    }
 
-    \draw[->] (-0.5,0.5) -- (0,0.5);
-    \node at (-1,0.5) {base};
+    % Connect elements with arrows
+    \foreach \i in {1,...,5} {
+      \pgfmathtruncatemacro{\j}{\i+1}
+      \ifnum\i=5
+      % Don't draw arrow to the last node as it's not directly connected
+      \else
+      \draw[->, thick] (e\i) -- (e\j);
+      \fi
+    }
+
+    % Add annotations
+    \node[above=0.5cm] at (e1) {第一个元素};
+    \node[below=0.5cm] at (e1) {直接后继};
+    \node[below=0.5cm] at (e2) {直接前驱};
+    \node[above=0.5cm] at (e6) {最后一个元素};
+  \end{tikzpicture}
+  \caption{线性表的逻辑结构示意图}
+\end{figure}
+
+\subsection{线性表的抽象数据类型描述}
+
+\textcolor{red}{线性表的ADT}可以用以下方式表述：
+\begin{itemize}
+  \item \textbf{数据对象}: 线性表是n个数据元素的有限序列
+  \item \textbf{数据关系}: 除最后一个元素外，每个元素有且仅有一个直接后继；除第一个元素外，每个元素有且仅有一个直接前驱
+  \item \textbf{基本操作}: 初始化、销毁、插入、删除、查找、更新等
+\end{itemize}
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[
+      operation/.style={draw, rounded corners, fill=green!10, minimum width=2cm, minimum height=0.7cm}
+    ]
+    % Draw ADT box
+    \draw[rounded corners, fill=yellow!10] (0,0) rectangle (10,-5) node[pos=.5] {};
+    \node[font=\bfseries] at (5,0.5) {线性表ADT};
+
+    % Basic operations
+    \node[operation] at (2.5,-1) {InitList()};
+    \node[operation] at (7.5,-1) {DestroyList()};
+
+    \node[operation] at (2.5,-2) {ListInsert()};
+    \node[operation] at (7.5,-2) {ListDelete()};
+
+    \node[operation] at (2.5,-3) {GetElem()};
+    \node[operation] at (7.5,-3) {LocateElem()};
+
+    \node[operation] at (2.5,-4) {ListLength()};
+    \node[operation] at (7.5,-4) {ListEmpty()};
+  \end{tikzpicture}
+  \caption{线性表的抽象数据类型}
+\end{figure}
+
+\subsection{顺序表}
+
+\subsubsection{顺序表的定义}
+\textcolor{red}{顺序表（Sequential List）}是用一组地址连续的存储单元依次存储线性表的数据元素，从而使得逻辑上相邻的两个元素在物理位置上也相邻。
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}
+    % 顺序表的内存表示
+    \foreach \i in {0,...,9} {
+      \draw (\i,0) rectangle ++(1,1);
+      \ifnum\i<5
+      \node at (\i+0.5,0.5) {$a_{\i+1}$};
+      \else
+      \node at (\i+0.5,0.5) {};
+      \fi
+    }
+
+    % 标注
+    \draw[decorate, decoration={brace, amplitude=10pt}] (0,1.2) -- (5,1.2)
+    node[midway, above=10pt] {已存储元素(length=5)};
+    \draw[decorate, decoration={brace, amplitude=10pt}] (5,1.2) -- (10,1.2)
+    node[midway, above=10pt] {未使用空间};
+
+    % 索引标注
+    \foreach \i in {0,...,9} {
+      \node[below=0.3cm] at (\i+0.5, 0) {$[\i]$};
+    }
+
+    % 数组名和基地址
+    \node[below=0.8cm] at (0.5, 0) {base};
   \end{tikzpicture}
   \caption{顺序表的存储结构}
 \end{figure}
 
+\subsubsection{顺序表的特点}
+\begin{itemize}
+  \item 优点：随机访问（通过位置直接计算地址），存储密度高
+  \item 缺点：插入删除需要移动元素，大小固定难以扩展
+\end{itemize}
+
 \subsubsection{顺序表的基本运算}
+顺序表的基本运算时间复杂度：
+\begin{center}
+  \begin{tabular}{|l|c|c|}
+    \hline
+    \textbf{操作} & \textbf{最好情况} & \textbf{最坏情况} \\
+    \hline
+    按值查找 & $O(1)$ & $O(n)$ \\
+    \hline
+    按位查找 & $O(1)$ & $O(1)$ \\
+    \hline
+    插入操作 & $O(1)$ & $O(n)$ \\
+    \hline
+    删除操作 & $O(1)$ & $O(n)$ \\
+    \hline
+  \end{tabular}
+\end{center}
 
-\paragraph{顺序表的初始化}
-\begin{verbatim}
-Status InitList_Sq(SqList &L) {
-    // 为顺序表分配一个大小为MAXSIZE的数组空间
-    L.data = new ElemType[MAXSIZE];
-    if (!L.data) return ERROR;  // 存储分配失败
-    L.length = 0;               // 空表长度为0
-    L.maxSize = MAXSIZE;        // 最大长度为MAXSIZE
-    return OK;
-}
-\end{verbatim}
-
-\paragraph{顺序表的取值}
-根据位置$i$获取相应位置数据元素$e$的值，时间复杂度为$O(1)$。
-
-\begin{verbatim}
-Status GetElem_Sq(SqList L, int i, ElemType &e) {
-    if (i < 1 || i > L.length) return ERROR;  // i值不合法
-    e = L.data[i-1];                          // 第i-1个单元存储第i个元素
-    return OK;
-}
-\end{verbatim}
-
-\paragraph{顺序表的查找}
-在顺序表L中查找值为e的元素，若找到，则返回其位序；否则，返回0。
-
-\begin{verbatim}
-int LocateElem_Sq(SqList L, ElemType e) {
-    for (int i = 0; i < L.length; i++)
-        if (L.data[i] == e) return i+1;  // 返回位序
-    return 0;  // 查找失败，返回0
-}
-\end{verbatim}
-
-顺序查找的平均时间复杂度为$O(n)$。
-
-\paragraph{顺序表的插入}
-在顺序表L的第i个位置插入新元素e。
-
-\begin{verbatim}
-Status ListInsert_Sq(SqList &L, int i, ElemType e) {
-    if (i < 1 || i > L.length + 1) return ERROR;  // i值不合法
-    if (L.length >= L.maxSize) return ERROR;      // 当前存储空间已满
-
-    // 将第i个位置后的元素向后移动
-    for (int j = L.length; j >= i; j--)
-        L.data[j] = L.data[j-1];
-
-    L.data[i-1] = e;  // 插入新元素
-    L.length++;       // 表长增加1
-    return OK;
-}
-\end{verbatim}
-
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}
-    % 原始顺序表
-    \draw (0,2) rectangle (6,3);
-    \foreach \x in {1,2,3,4,5}
-    \draw (\x,2) -- (\x,3);
-    \node at (0.5,2.5) {$a_1$};
-    \node at (1.5,2.5) {$a_2$};
-    \node at (2.5,2.5) {$a_3$};
-    \node at (3.5,2.5) {$a_4$};
-    \node at (4.5,2.5) {$a_5$};
-    \node at (5.5,2.5) {$a_6$};
+    % 初始顺序表
+    \foreach \i in {0,...,6} {
+      \draw (\i,3) rectangle ++(1,1);
+      \node at (\i+0.5,3.5) {$a_{\i+1}$};
+      \node[above=0.2cm] at (\i+0.5, 4) {$[\i]$};
+    }
 
-    % 插入后
-    \draw (0,0) rectangle (7,1);
-    \foreach \x in {1,2,3,4,5,6}
-    \draw (\x,0) -- (\x,1);
-    \node at (0.5,0.5) {$a_1$};
-    \node at (1.5,0.5) {$a_2$};
-    \node at (2.5,0.5) {$e$};
-    \node at (3.5,0.5) {$a_3$};
-    \node at (4.5,0.5) {$a_4$};
-    \node at (5.5,0.5) {$a_5$};
-    \node at (6.5,0.5) {$a_6$};
+    % 插入操作(在位置2插入x)
+    \draw[->, thick, red] (3.5,3) -- (3.5,1.5);
+    \node[right] at (3.5,0.5) {元素后移};
 
-    % 箭头和说明
-    \draw[->] (2.5,1.5) -- (2.5,1);
-    \node at (3.3,1.5) {插入到第3个位置};
+    \foreach \i in {0,...,7} {
+      \draw (\i,1) rectangle ++(1,1);
+      \ifcase\i
+      \node at (\i+0.5,1.5) {$a_1$};
+      \or
+      \node at (\i+0.5,1.5) {$a_2$};
+      \or
+      \node at (\i+0.5,1.5) {$x$};
+      \or
+      \node at (\i+0.5,1.5) {$a_3$};
+      \or
+      \node at (\i+0.5,1.5) {$a_4$};
+      \or
+      \node at (\i+0.5,1.5) {$a_5$};
+      \or
+      \node at (\i+0.5,1.5) {$a_6$};
+      \or
+      \node at (\i+0.5,1.5) {$a_7$};
+      \fi
+      \node[above=0.2cm] at (\i+0.5, 2) {$[\i]$};
+    }
+
+    % 插入位置标注
+    \node[below=0.3cm] at (2.5, 1) {插入位置};
+    \draw[->] (2.5,0.7) -- (2.5,1);
   \end{tikzpicture}
   \caption{顺序表的插入操作示意图}
 \end{figure}
 
-顺序表插入操作的时间复杂度分析：
-\begin{itemize}
-  \item 最好情况：插入到表尾，无需移动元素，时间复杂度为$O(1)$。
-  \item 最坏情况：插入到表头，需要移动所有元素，时间复杂度为$O(n)$。
-  \item 平均情况：假设插入位置均匀分布，平均需要移动$n/2$个元素，时间复杂度为$O(n)$。
-\end{itemize}
+\subsection{链表}
 
-\paragraph{顺序表的删除}
-删除顺序表L中第i个元素，并用e返回其值。
+\subsubsection{链表的定义}
+\textcolor{red}{链表（Linked List）}是用一组任意的存储单元来依次存储线性表中的数据元素，元素的存储顺序不必和逻辑顺序一致，通过指针来指示元素的逻辑关系。
 
-\begin{verbatim}
-Status ListDelete_Sq(SqList &L, int i, ElemType &e) {
-    if (i < 1 || i > L.length) return ERROR;  // i值不合法
-
-    e = L.data[i-1];  // 保存被删除元素
-
-    // 将第i个位置后的元素向前移动
-    for (int j = i; j < L.length; j++)
-        L.data[j-1] = L.data[j];
-
-    L.length--;       // 表长减少1
-    return OK;
-}
-\end{verbatim}
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-    % 原始顺序表
-    \draw (0,2) rectangle (6,3);
-    \foreach \x in {1,2,3,4,5}
-    \draw (\x,2) -- (\x,3);
-    \node at (0.5,2.5) {$a_1$};
-    \node at (1.5,2.5) {$a_2$};
-    \node at (2.5,2.5) {$a_3$};
-    \node at (3.5,2.5) {$a_4$};
-    \node at (4.5,2.5) {$a_5$};
-    \node at (5.5,2.5) {$a_6$};
-
-    % 删除后
-    \draw (0,0) rectangle (5,1);
-    \foreach \x in {1,2,3,4}
-    \draw (\x,0) -- (\x,1);
-    \node at (0.5,0.5) {$a_1$};
-    \node at (1.5,0.5) {$a_2$};
-    \node at (2.5,0.5) {$a_4$};
-    \node at (3.5,0.5) {$a_5$};
-    \node at (4.5,0.5) {$a_6$};
-
-    % 箭头和说明
-    \draw[->] (2.5,2) -- (2.5,1.5);
-    \node at (3.3,1.5) {删除第3个元素};
-  \end{tikzpicture}
-  \caption{顺序表的删除操作示意图}
-\end{figure}
-
-顺序表删除操作的时间复杂度分析：
-\begin{itemize}
-  \item 最好情况：删除表尾元素，无需移动元素，时间复杂度为$O(1)$。
-  \item 最坏情况：删除表头元素，需要移动所有元素，时间复杂度为$O(n)$。
-  \item 平均情况：假设删除位置均匀分布，平均需要移动$(n-1)/2$个元素，时间复杂度为$O(n)$。
-\end{itemize}
-
-\paragraph{顺序表的排序}
-常用的排序算法包括冒泡排序、选择排序、插入排序、希尔排序、快速排序、堆排序、归并排序等。
-
-以冒泡排序为例：
-\begin{verbatim}
-void BubbleSort(SqList &L) {
-    for (int i = 0; i < L.length - 1; i++) {
-        bool flag = false;  // 标记本轮是否有交换
-        for (int j = 0; j < L.length - 1 - i; j++) {
-            if (L.data[j] > L.data[j+1]) {  // 相邻元素比较
-                // 交换元素
-                ElemType temp = L.data[j];
-                L.data[j] = L.data[j+1];
-                L.data[j+1] = temp;
-                flag = true;  // 本轮有交换
-            }
-        }
-        if (!flag) break;  // 本轮无交换，说明已经有序
-    }
-}
-\end{verbatim}
-
-\subsection{线性表的链式表示}
-
-\subsubsection{链表的基本概念}
-\begin{itemize}
-  \item \textbf{链表}是线性表的链式存储结构，它使用一组任意的存储单元来存储线性表中的数据元素。
-  \item 链表中的每个元素（称为结点）在存储数据的同时，还存储指向下一个结点的指针（或引用）。
-  \item 链表不要求逻辑上相邻的元素在物理位置上也相邻。
-  \item 优点：
-    \begin{enumerate}
-      \item 插入和删除操作不需要移动元素，时间复杂度为$O(1)$（不考虑查找时间）。
-      \item 充分利用计算机内存空间，不会出现内存浪费。
-    \end{enumerate}
-  \item 缺点：
-    \begin{enumerate}
-      \item 不支持随机访问，访问特定位置的元素需要$O(n)$的时间复杂度。
-      \item 需要额外的存储空间来存储指针信息。
-    \end{enumerate}
-\end{itemize}
-
-\subsubsection{单链表}
-
-\paragraph{单链表的节点结构}
-在C语言中，单链表的节点结构如下：
-
-\begin{verbatim}
-typedef struct LNode {
-    ElemType data;         // 数据域
-    struct LNode *next;    // 指针域，指向下一个节点
-} LNode, *LinkList;        // LinkList为指向LNode的指针类型
-\end{verbatim}
-
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}
     % 头指针
-    \node[draw, rectangle] (head) at (0,0) {head};
+    \node[draw, minimum width=1cm, minimum height=0.8cm] (head) at (0,0) {head};
 
     % 节点
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (2,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (5,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (8,0) {};
+    \foreach \i/\x in {1/2, 2/4, 3/6, 4/8, 5/10} {
+      % 数据域和指针域
+      \draw (\x,0) rectangle ++(1,0.8);
+      \draw (\x+1,0) rectangle ++(0.5,0.8);
+      \node at (\x+0.5,0.4) {$a_\i$};
 
-    % 节点内部
-    \draw (node1.center) -- (node1.east);
-    \draw (node2.center) -- (node2.east);
-    \draw (node3.center) -- (node3.east);
-
-    \node at (node1.west) [xshift=0.5cm] {$a_1$};
-    \node at (node2.west) [xshift=0.5cm] {$a_2$};
-    \node at (node3.west) [xshift=0.5cm] {$a_3$};
-
-    % 指针
-    \draw[->] (head) -- (node1);
-    \draw[->] (node1.east) -- (node2.west);
-    \draw[->] (node2.east) -- (node3.west);
-    \draw[->] (node3.east) -- (9.5,0);
-    \node at (10,0) {NULL};
-  \end{tikzpicture}
-  \caption{单链表示意图}
-\end{figure}
-
-\paragraph{单链表的创建方式}
-
-1. 头插法（逆序建立）
-\begin{verbatim}
-LinkList CreateList_H() {
-    LinkList L = (LinkList)malloc(sizeof(LNode));  // 创建头节点
-    L->next = NULL;                                // 初始为空链表
-
-    int n;
-    printf("请输入元素个数：");
-    scanf("%d", &n);
-
-    for (int i = 0; i < n; i++) {
-        LinkList p = (LinkList)malloc(sizeof(LNode));  // 创建新节点
-        scanf("%d", &(p->data));                       // 输入元素值
-        p->next = L->next;   // 将新节点插入表头
-        L->next = p;
+      \ifnum\i<5
+      \node at (\x+1.25,0.4) {$\bullet$};
+      \draw[->] (\x+1.25,0.4) -- ++(0.75,0);
+      \else
+      \node at (\x+1.25,0.4) {$\emptyset$};
+      \fi
     }
 
-    return L;
-}
-\end{verbatim}
+    % 连接头指针到第一个节点
+    \draw[->] (head) -- (2,0.4);
 
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-    % Headers for each step
-    \node at (0,4.5) {初始状态};
-    \node at (5,4.5) {插入第一个节点};
-    \node at (10,4.5) {插入第二个节点};
-    \node at (5,0.5) {最终结果};
-
-    % Initial state
-    \node[draw, circle] (head1) at (0,3.5) {L};
-    \draw[->] (head1) -- (1,3.5);
-    \node at (1.5,3.5) {NULL};
-
-    % First node insertion
-    \node[draw, circle] (head2) at (5,3.5) {L};
-    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (node1) at (7,3.5) {};
-    \draw (node1.center) -- (node1.east);
-    \node at (node1.west) [xshift=0.5cm] {$a_1$};
-    \draw[->] (head2) -- (node1);
-    \draw[->] (node1.east) -- (8.5,3.5);
-    \node at (9,3.5) {NULL};
-    \node[draw, rectangle, dashed] at (7,2.8) {新节点};
-
-    % Second node insertion
-    \node[draw, circle] (head3) at (10,3.5) {L};
-    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (node2a) at (12,3.5) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (node2b) at (14,3.5) {};
-    \draw (node2a.center) -- (node2a.east);
-    \draw (node2b.center) -- (node2b.east);
-    \node at (node2a.west) [xshift=0.5cm] {$a_2$};
-    \node at (node2b.west) [xshift=0.5cm] {$a_1$};
-    \draw[->] (head3) -- (node2a);
-    \draw[->] (node2a.east) -- (node2b.west);
-    \draw[->] (node2b.east) -- (15.5,3.5);
-    \node at (16,3.5) {NULL};
-    \node[draw, rectangle, dashed] at (12,2.8) {新节点};
-
-    % Steps illustration
-    \draw[->, thick] (2.5,3.5) -- (3.5,3.5);
-    \draw[->, thick] (9.5,3.5) -- (8.5,3.5);
-
-    % Final result with detailed explanation
-    \node[draw, circle] (head4) at (2,2) {L};
-    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (result1) at (4,2) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=0.8cm] (result2) at (6,2) {};
-    \draw (result1.center) -- (result1.east);
-    \draw (result2.center) -- (result2.east);
-    \node at (result1.west) [xshift=0.5cm] {$a_2$};
-    \node at (result2.west) [xshift=0.5cm] {$a_1$};
-    \draw[->] (head4) -- (result1);
-    \draw[->] (result1.east) -- (result2.west);
-    \draw[->] (result2.east) -- (7.5,2);
-    \node at (8,2) {NULL};
-
-    % Explanation of head insertion logic
-    \node[align=left] at (5,0) {头插法特点: 新节点总是插入到链表头部，导致元素顺序与输入顺序相反};
+    % 标注
+    \node[above=0.7cm] at (2.5,0) {数据域};
+    \node[below=0.3cm] at (3.25,0) {指针域};
+    \node[below=0.3cm] at (0,0) {头指针};
+    \node[below=0.3cm] at (10.75,0) {NULL};
   \end{tikzpicture}
-  \caption{单链表头插法示意图（逆序建立）}
+  \caption{单链表结构示意图}
 \end{figure}
 
-2. 尾插法（正序建立）
-\begin{verbatim}
-LinkList CreateList_T() {
-    LinkList L = (LinkList)malloc(sizeof(LNode));  // 创建头节点
-    L->next = NULL;                                // 初始为空链表
-    LNode *r = L;                                  // r指向尾节点，初始时指向头节点
-
-    int n;
-    printf("请输入元素个数：");
-    scanf("%d", &n);
-
-    for (int i = 0; i < n; i++) {
-        LinkList p = (LinkList)malloc(sizeof(LNode));  // 创建新节点
-        scanf("%d", &(p->data));                       // 输入元素值
-        p->next = NULL;      // 新节点暂时是尾节点
-        r->next = p;         // 将新节点插入到尾节点之后
-        r = p;               // r指向新的尾节点
-    }
-
-    return L;
-}
-\end{verbatim}
-
-\paragraph{单链表的基本操作}
-
-1. 获取链表长度
-\begin{verbatim}
-int GetLength(LinkList L) {
-    int length = 0;
-    LinkList p = L->next;  // 从第一个节点开始
-
-    while (p) {
-        length++;
-        p = p->next;
-    }
-
-    return length;
-}
-\end{verbatim}
-
-2. 按位置查找节点
-\begin{verbatim}
-LNode* GetElem(LinkList L, int i) {
-    if (i < 0) return NULL;  // i不合法
-
-    int j = 0;
-    LinkList p = L;  // 从头节点开始，j=0表示头节点
-
-    while (p && j < i) {
-        p = p->next;
-        j++;
-    }
-
-    return p;  // 返回第i个节点
-}
-\end{verbatim}
-
-3. 按值查找节点
-\begin{verbatim}
-LNode* LocateElem(LinkList L, ElemType e) {
-    LinkList p = L->next;  // 从第一个节点开始
-
-    while (p && p->data != e)
-        p = p->next;
-
-    return p;  // 找到返回节点指针，否则返回NULL
-}
-\end{verbatim}
-
-4. 插入节点
-在第i个位置插入值为e的新节点。
-
-\begin{verbatim}
-Status ListInsert(LinkList &L, int i, ElemType e) {
-    LinkList p = GetElem(L, i-1);  // 查找第i-1个节点
-    if (!p) return ERROR;          // i-1位置不存在
-
-    LinkList s = (LinkList)malloc(sizeof(LNode));  // 创建新节点
-    s->data = e;                                  // 赋值
-
-    s->next = p->next;  // 新节点指向原第i个节点
-    p->next = s;        // 第i-1个节点指向新节点
-
-    return OK;
-}
-\end{verbatim}
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-    % 原始链表
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (0,2) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (3,2) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (6,2) {};
-
-    \draw (node1.center) -- (node1.east);
-    \draw (node2.center) -- (node2.east);
-    \draw (node3.center) -- (node3.east);
-
-    \node at (node1.west) [xshift=0.5cm] {$a_1$};
-    \node at (node2.west) [xshift=0.5cm] {$a_2$};
-    \node at (node3.west) [xshift=0.5cm] {$a_3$};
-
-    \draw[->] (node1.east) -- (node2.west);
-    \draw[->] (node2.east) -- (node3.west);
-    \draw[->] (node3.east) -- (7.5,2);
-    \node at (8,2) {NULL};
-
-    % 新节点
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (newnode) at (3,0) {};
-    \draw (newnode.center) -- (newnode.east);
-    \node at (newnode.west) [xshift=0.5cm] {$e$};
-    \node at (3,-0.5) {新节点};
-
-    % 插入后的链表
-    \draw[->, dashed] (newnode.east) -- (node3.west);
-    \draw[->, dashed] (node2.east) -- (newnode.west);
-  \end{tikzpicture}
-  \caption{单链表的插入操作}
-\end{figure}
-
-5. 删除节点
-删除第i个节点。
-
-\begin{verbatim}
-Status ListDelete(LinkList &L, int i, ElemType &e) {
-    LinkList p = GetElem(L, i-1);  // 查找第i-1个节点
-    if (!p || !p->next) return ERROR;  // i-1位置不存在或第i个节点不存在
-
-    LinkList q = p->next;    // q指向待删除节点
-    e = q->data;            // 保存被删除节点的值
-
-    p->next = q->next;      // 第i-1个节点指向第i+1个节点
-    free(q);                // 释放被删除节点的空间
-
-    return OK;
-}
-\end{verbatim}
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-    % 原始链表
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (0,2) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (3,2) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (6,2) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node4) at (9,2) {};
-
-    \draw (node1.center) -- (node1.east);
-    \draw (node2.center) -- (node2.east);
-    \draw (node3.center) -- (node3.east);
-    \draw (node4.center) -- (node4.east);
-
-    \node at (node1.west) [xshift=0.5cm] {$a_1$};
-    \node at (node2.west) [xshift=0.5cm] {$a_2$};
-    \node at (node3.west) [xshift=0.5cm] {$a_3$};
-    \node at (node4.west) [xshift=0.5cm] {$a_4$};
-
-    \draw[->] (node1.east) -- (node2.west);
-    \draw[->] (node2.east) -- (node3.west);
-    \draw[->] (node3.east) -- (node4.west);
-    \draw[->] (node4.east) -- (10.5,2);
-    \node at (11,2) {NULL};
-
-    % 待删除节点标记
-    \node at (6,2.7) {待删除节点};
-    \draw[dashed] (6,2.5) -- (6,2.2);
-
-    % 删除后的结果
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result1) at (0,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result2) at (3,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (result4) at (9,0) {};
-
-    \draw (result1.center) -- (result1.east);
-    \draw (result2.center) -- (result2.east);
-    \draw (result4.center) -- (result4.east);
-
-    \node at (result1.west) [xshift=0.5cm] {$a_1$};
-    \node at (result2.west) [xshift=0.5cm] {$a_2$};
-    \node at (result4.west) [xshift=0.5cm] {$a_4$};
-
-    \draw[->] (result1.east) -- (result2.west);
-    \draw[->, thick, color=red] (result2.east) -- (result4.west);
-    \draw[->] (result4.east) -- (10.5,0);
-    \node at (11,0) {NULL};
-
-    % 箭头和说明
-    \draw[->, dashed] (3,1.7) -- (3,0.3);
-    \draw[->, dashed] (9,1.7) -- (9,0.3);
-
-    % 节点3被释放
-    \node[draw, rectangle, dashed, minimum width=2cm, minimum height=1cm] (node3free) at (6,0) {};
-    \draw[dashed] (node3free.center) -- (node3free.east);
-    \node at (node3free.west) [xshift=0.5cm, text opacity=0.5] {$a_3$};
-    \node at (6,-0.7) {被释放的节点};
-
-    % 显示释放过程
-    \draw[->, dashed] (node3.south) -- (node3free.north);
-  \end{tikzpicture}
-  \caption{单链表的删除操作示意图}
-\end{figure}
-
-\subsubsection{循环链表}
-
-循环链表是一种特殊的链表，其中最后一个节点的指针不是NULL，而是指向链表中的第一个节点或头节点，形成一个环。
-
-\paragraph{单循环链表}
-单循环链表是单链表的一种变形，其最后一个节点的next指针指向头节点，形成一个环。
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-    % 头节点
-    \node[draw, circle] (head) at (0,0) {L};
-
-    % 节点
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (2,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (5,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (8,0) {};
-
-    % 节点内部
-    \draw (node1.center) -- (node1.east);
-    \draw (node2.center) -- (node2.east);
-    \draw (node3.center) -- (node3.east);
-
-    \node at (node1.west) [xshift=0.5cm] {$a_1$};
-    \node at (node2.west) [xshift=0.5cm] {$a_2$};
-    \node at (node3.west) [xshift=0.5cm] {$a_3$};
-
-    % 指针
-    \draw[->] (head) -- (node1);
-    \draw[->] (node1.east) -- (node2.west);
-    \draw[->] (node2.east) -- (node3.west);
-
-    % 循环连接
-    \draw[->] (node3.east) -- (9.5,0) arc (0:180:4.75) -- (0,0.5);
-  \end{tikzpicture}
-  \caption{单循环链表示意图}
-\end{figure}
-
-单循环链表的优点：
+\subsubsection{链表的特点}
 \begin{itemize}
-  \item 从表中任一节点出发都能遍历整个链表
-  \item 适合于需要循环处理的数据结构，如约瑟夫问题
-  \item 在尾节点插入和删除操作更方便
+  \item 优点：插入删除不需要移动元素，只需修改指针，大小可动态调整
+  \item 缺点：不支持随机访问，需要从头开始查找，存储密度低（需要额外的指针空间）
 \end{itemize}
 
-\paragraph{循环链表的基本操作}
+\subsubsection{链表的分类}
+链表根据结构可分为：
+\begin{enumerate}
+  \item 单链表：每个结点只有一个指针域，指向后继结点
+  \item 双链表：每个结点有两个指针域，分别指向前驱和后继结点
+  \item 循环链表：尾节点的指针指向头节点形成环状结构
+\end{enumerate}
 
-1. 初始化循环链表
-\begin{verbatim}
-Status InitList(LinkList &L) {
-    L = (LinkList)malloc(sizeof(LNode));  // 创建头节点
-    if (!L) return ERROR;                 // 内存分配失败
-    L->next = L;                          // 头节点指向自己，形成环
-    return OK;
-}
-\end{verbatim}
-
-2. 判断循环链表是否为空
-\begin{verbatim}
-Status ListEmpty(LinkList L) {
-    if (L->next == L)  // 如果头节点指向自己，表示为空
-        return TRUE;
-    else
-        return FALSE;
-}
-\end{verbatim}
-
-3. 在循环链表尾部插入节点
-\begin{verbatim}
-Status InsertLast(LinkList &L, ElemType e) {
-    LinkList p = L;
-
-    // 查找尾节点
-    while (p->next != L)
-        p = p->next;
-
-    // 创建新节点
-    LinkList s = (LinkList)malloc(sizeof(LNode));
-    if (!s) return ERROR;
-    s->data = e;
-
-    // 插入到尾部
-    s->next = L;      // 新节点指向头节点
-    p->next = s;      // 原尾节点指向新节点
-
-    return OK;
-}
-\end{verbatim}
-
-\paragraph{约瑟夫问题的应用实例}
-约瑟夫问题（约瑟夫环）：n个人围成一圈，从第k个人开始报数，数到m的人出列，然后从下一个人开始重新报数，继续数到m的人出列，以此类推，直到所有人都出列，求出列顺序。
-
-\begin{verbatim}
-void Joseph(int n, int k, int m) {
-    // 创建包含n个节点的循环链表
-    LinkList L = (LinkList)malloc(sizeof(LNode));
-    LinkList p = L;
-
-    // 创建n个节点
-    for (int i = 1; i <= n; i++) {
-        LinkList s = (LinkList)malloc(sizeof(LNode));
-        s->data = i;  // 节点数据为人的编号
-        p->next = s;
-        p = s;
-    }
-    p->next = L->next;  // 最后一个节点指向第一个节点，形成循环
-
-    // 找到第k个人
-    p = L->next;
-    for (int i = 1; i < k; i++)
-        p = p->next;
-
-    // 依次找到第m个人并"出列"
-    LinkList q;
-    while (p->next != p) {  // 当只剩一个节点时结束
-        // 找到第m-1个节点
-        for (int i = 1; i < m-1; i++)
-            p = p->next;
-
-        q = p->next;  // q指向第m个节点，即要删除的节点
-        printf("%d ", q->data);  // 输出出列人的编号
-        p->next = q->next;  // 删除q节点
-        free(q);
-        p = p->next;  // p指向删除节点的下一个节点
-    }
-
-    printf("%d\n", p->data);  // 输出最后一个人的编号
-    free(p);
-}
-\end{verbatim}
-
-\subsubsection{双向链表}
-
-双向链表（Double Linked List）是一种更复杂的链表，它的每个节点有两个指针域，一个指向前驱节点，一个指向后继节点。
-
-\paragraph{双向链表的节点结构}
-\begin{verbatim}
-typedef struct DuLNode {
-    ElemType data;           // 数据域
-    struct DuLNode *prior;   // 前驱指针
-    struct DuLNode *next;    // 后继指针
-} DuLNode, *DuLinkList;
-\end{verbatim}
-
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
-  \begin{tikzpicture}
-    % 头指针
-    \node[draw, rectangle] (head) at (0,0) {head};
+  \begin{tikzpicture}[
+      node distance=2cm,
+      list/.style={rectangle split, rectangle split parts=2, draw, rectangle split horizontal}
+    ]
+    % 双链表
+    \node[above] at (4.5,2) {双链表};
+    \foreach \i/\data in {1/a_1, 2/a_2, 3/a_3, 4/a_4} {
+      \node[list] (node\i) at (\i*2,1) {\nodepart{one}$\bullet$\nodepart{two}$\data$};
+    }
+    \node[list] (node5) at (10,1) {\nodepart{one}$\bullet$\nodepart{two}$a_5$};
 
-    % 节点
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (2,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (5,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (8,0) {};
+    \foreach \i in {1,2,3,4} {
+      \pgfmathtruncatemacro{\j}{\i+1}
+      \draw[->] ([xshift=0.3cm]node\i.east) -- ([xshift=-0.3cm]node\j.west);
+      \draw[->] ([xshift=-0.3cm]node\j.west) -- ([xshift=0.3cm]node\i.east);
+    }
 
-    % 两个分割线
-    \draw (1.33,0.5) -- (1.33,-0.5);
-    \draw (2.67,0.5) -- (2.67,-0.5);
-    \draw (4.33,0.5) -- (4.33,-0.5);
-    \draw (5.67,0.5) -- (5.67,-0.5);
-    \draw (7.33,0.5) -- (7.33,-0.5);
-    \draw (8.67,0.5) -- (8.67,-0.5);
+    % 循环链表
+    \node[above] at (4.5,-1) {循环链表};
+    \foreach \i/\x in {1/1, 2/3, 3/5, 4/7, 5/9} {
+      \draw (\x,-2) rectangle ++(1,0.8);
+      \draw (\x+1,-2) rectangle ++(0.5,0.8);
+      \node at (\x+0.5,-1.6) {$a_\i$};
+      \node at (\x+1.25,-1.6) {$\bullet$};
+    }
 
-    \node at (node1.west) [xshift=0.75cm] {$a_1$};
-    \node at (node2.west) [xshift=0.75cm] {$a_2$};
-    \node at (node3.west) [xshift=0.75cm] {$a_3$};
-    \node at (1,0) {NULL};
-    \node at (4,0) {};
-    \node at (7,0) {};
-    \node at (10,0) {NULL};
+    \foreach \i/\x in {1/1, 2/3, 3/5, 4/7} {
+      \pgfmathtruncatemacro{\j}{\x+2}
+      \draw[->] (\x+1.25,-1.6) -- (\j,-1.6);
+    }
 
-    % 前向指针
-    \draw[->] (node1.west) -- (0.5,0);
-    \draw[->] (node2.west) -- (node1.east);
-    \draw[->] (node3.west) -- (node2.east);
-
-    % 后向指针
-    \draw[->] (head) -- (node1.west);
-    \draw[->] (node1.east) -- (node2.west);
-    \draw[->] (node2.east) -- (node3.west);
-    \draw[->] (node3.east) -- (9.5,0);
+    % 循环箭头
+    \draw[->] (10.25,-1.6) to[out=0,in=0] (1,-2);
+    % \draw (10.25,-1) to[out=0,in=0] (1,-1.6);
   \end{tikzpicture}
-  \caption{双向链表示意图}
+  \caption{双链表与循环链表示意图}
 \end{figure}
 
-\paragraph{双向链表的初始化}
-\begin{verbatim}
-Status InitDuList(DuLinkList &L) {
-    L = (DuLinkList)malloc(sizeof(DuLNode));
-    if (!L) return ERROR;
-
-    L->prior = NULL;
-    L->next = NULL;
-
-    return OK;
-}
-\end{verbatim}
-
-\paragraph{双向链表的插入操作}
-在双向链表中第i个位置之前插入元素e。
-
-\begin{verbatim}
-Status ListInsert_DuL(DuLinkList &L, int i, ElemType e) {
-    // 查找第i个节点
-    DuLinkList p = L;
-    int j = 0;
-
-    while (p && j < i) {
-        p = p->next;
-        j++;
-    }
-
-    if (!p || j > i) return ERROR;  // i值不合法
-
-    // 创建新节点
-    DuLinkList s = (DuLinkList)malloc(sizeof(DuLNode));
-    if (!s) return ERROR;
-    s->data = e;
-
-    // 插入操作
-    s->prior = p->prior;  // 设置新节点的前驱
-    s->next = p;          // 设置新节点的后继
-    p->prior->next = s;   // 设置前驱节点的后继
-    p->prior = s;         // 设置p的前驱
-
-    return OK;
-}
-\end{verbatim}
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-    % 原始链表
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (0,2) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (3,2) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (6,2) {};
-
-    % 两个分割线
-    \draw (-0.67,2.5) -- (-0.67,1.5);
-    \draw (0.67,2.5) -- (0.67,1.5);
-    \draw (2.33,2.5) -- (2.33,1.5);
-    \draw (3.67,2.5) -- (3.67,1.5);
-    \draw (5.33,2.5) -- (5.33,1.5);
-    \draw (6.67,2.5) -- (6.67,1.5);
-
-    \node at (node1.west) [xshift=0.75cm] {$a_1$};
-    \node at (node2.west) [xshift=0.75cm] {$a_2$};
-    \node at (node3.west) [xshift=0.75cm] {$a_3$};
-
-    % 原始链表连接
-    \draw[->] (node1.east) -- (node2.west);
-    \draw[->] (node2.east) -- (node3.west);
-    \draw[<-] (node1.west) -- (-1,2);
-    \draw[<-] (node2.west) -- (node1.east);
-    \draw[<-] (node3.west) -- (node2.east);
-    \draw[->] (node3.east) -- (7.5,2);
-
-    % 新节点
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (newnode) at (3,0) {};
-    \draw (2.33,0.5) -- (2.33,-0.5);
-    \draw (3.67,0.5) -- (3.67,-0.5);
-    \node at (newnode.west) [xshift=0.75cm] {$e$};
-    \node at (3,-1) {新节点};
-
-    % 插入过程中的连接关系
-    \draw[->, dashed, color=red] (newnode.east) -- (node3.west);
-    \draw[->, dashed, color=red] (newnode.west) -- (node1.east);
-    \draw[<-, dashed, color=red] (newnode.east) -- (node3.west);
-    \draw[<-, dashed, color=red] (newnode.west) -- (node1.east);
-  \end{tikzpicture}
-  \caption{双向链表的插入操作示意图}
-\end{figure}
-
-\paragraph{双向链表的删除操作}
-删除双向链表中的第i个节点。
-
-\begin{verbatim}
-Status ListDelete_DuL(DuLinkList &L, int i, ElemType &e) {
-    // 查找第i个节点
-    DuLinkList p = L;
-    int j = 0;
-
-    while (p && j < i) {
-        p = p->next;
-        j++;
-    }
-
-    if (!p || j > i) return ERROR;  // i值不合法
-
-    e = p->data;  // 保存被删除节点的值
-
-    // 删除操作
-    p->prior->next = p->next;  // 前驱节点的后继指向后继节点
-
-    if (p->next)  // 若p不是最后一个节点
-        p->next->prior = p->prior;  // 后继节点的前驱指向前驱节点
-
-    free(p);  // 释放节点
-
-    return OK;
-}
-\end{verbatim}
-
-\paragraph{双向循环链表}
-双向循环链表是结合了循环链表和双向链表的特点，其中第一个节点的前驱指向最后一个节点，最后一个节点的后继指向第一个节点。
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-    % 头节点
-    \node[draw, circle] (head) at (0,0) {L};
-
-    % 节点
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node1) at (2,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node2) at (5,0) {};
-    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (node3) at (8,0) {};
-
-    % 两个分割线
-    \draw (1.33,0.5) -- (1.33,-0.5);
-    \draw (2.67,0.5) -- (2.67,-0.5);
-    \draw (4.33,0.5) -- (4.33,-0.5);
-    \draw (5.67,0.5) -- (5.67,-0.5);
-    \draw (7.33,0.5) -- (7.33,-0.5);
-    \draw (8.67,0.5) -- (8.67,-0.5);
-
-    \node at (node1.west) [xshift=0.75cm] {$a_1$};
-    \node at (node2.west) [xshift=0.75cm] {$a_2$};
-    \node at (node3.west) [xshift=0.75cm] {$a_3$};
-
-    % 后向指针
-    \draw[->] (head) -- (node1.west);
-    \draw[->] (node1.east) -- (node2.west);
-    \draw[->] (node2.east) -- (node3.west);
-    \draw[->] (node3.east) -- (9.5,0) arc (0:180:4.75) -- (0,0.5);
-
-    % 前向指针
-    \draw[<-, bend left] (node1.west) -- (node3.east);
-    \draw[<-] (node2.west) -- (node1.east);
-    \draw[<-] (node3.west) -- (node2.east);
-  \end{tikzpicture}
-  \caption{双向循环链表示意图}
-\end{figure}
-
-双向循环链表的优点：
-\begin{itemize}
-  \item 可以双向遍历，提高了访问效率
-  \item 可以从任意节点开始遍历整个链表
-  \item 某些特定操作（如删除给定节点）不需要再查找其前驱节点
-\end{itemize}
-
-\subsection{线性表各种实现方式的比较}
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{|l|c|c|c|c|}
+\subsubsection{链表的基本操作}
+链表的基本操作时间复杂度：
+\begin{center}
+  \begin{tabular}{|l|c|c|}
     \hline
-    \textbf{操作} & \textbf{顺序表} & \textbf{单链表} & \textbf{循环链表} & \textbf{双向链表} \\
+    \textbf{操作} & \textbf{顺序表} & \textbf{链表} \\
     \hline
-    按位查找 & $O(1)$ & $O(n)$ & $O(n)$ & $O(n)$ \\
-    按值查找 & $O(n)$ & $O(n)$ & $O(n)$ & $O(n)$ \\
-    插入操作 & $O(n)$ & $O(1)$* & $O(1)$* & $O(1)$* \\
-    删除操作 & $O(n)$ & $O(1)$* & $O(1)$* & $O(1)$* \\
-    空间效率 & 高 & 低 & 低 & 最低 \\
+    按值查找 & $O(n)$ & $O(n)$ \\
+    \hline
+    按位查找 & $O(1)$ & $O(n)$ \\
+    \hline
+    插入操作 & $O(n)$ & $O(1)$ \\
+    \hline
+    删除操作 & $O(n)$ & $O(1)$ \\
     \hline
   \end{tabular}
-  \caption{线性表各种实现方式的时间复杂度比较 (*不考虑查找时间)}
-\end{table}
+\end{center}
 
-\paragraph{存储空间分析}
-\begin{itemize}
-  \item \textbf{顺序表}：只需要存储数据元素本身和少量的管理信息（如表长）。
-  \item \textbf{单链表}：每个节点除了数据域外，还需要一个指针域，额外空间开销约为数据空间的一倍。
-  \item \textbf{双向链表}：每个节点需要两个指针域，额外空间开销约为数据空间的两倍。
-\end{itemize}
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}
+    % 初始链表
+    \node[draw, minimum width=1cm, minimum height=0.8cm] (head) at (0,2) {head};
 
-\paragraph{适用场合分析}
-\begin{itemize}
-  \item \textbf{顺序表适用场合}：
-    \begin{enumerate}
-      \item 表长变化不大，或可预先确定表长上限
-      \item 经常按位序访问数据
-      \item 数据元素占用存储空间较小
-      \item 对存储空间利用率要求较高
-    \end{enumerate}
-  \item \textbf{单链表适用场合}：
-    \begin{enumerate}
-      \item 表长变化较大或无法预知
-      \item 经常插入和删除数据
-      \item 不需要按位置随机访问
-    \end{enumerate}
-  \item \textbf{循环链表适用场合}：
-    \begin{enumerate}
-      \item 需要循环遍历数据的场合
-      \item 需要频繁在首尾节点间切换的场合
-      \item 适用于约瑟夫环等问题
-    \end{enumerate}
-  \item \textbf{双向链表适用场合}：
-    \begin{enumerate}
-      \item 需要双向遍历数据的场合
-      \item 需要查找给定节点的前驱节点
-      \item 经常在两个方向上移动指针的场合
-    \end{enumerate}
-\end{itemize}
+    \foreach \i/\x in {1/1, 2/3, 3/5, 4/7} {
+      \draw (\x+1,2) rectangle ++(1,0.8);
+      \draw (\x+2,2) rectangle ++(0.5,0.8);
+      \node at (\x+1.5,2.4) {$a_\i$};
 
-\subsection{线性表的应用实例}
-
-\subsubsection{多项式表示}
-
-多项式$P(x) = a_0 + a_1x + a_2x^2 + \ldots + a_nx^n$可以用线性表表示：
-
-\paragraph{顺序表表示多项式}
-可以用一维数组按照指数递增的顺序存储各项系数。这种方式简单，但对于稀疏多项式（大多数系数为0）会浪费空间。
-
-\paragraph{链表表示多项式}
-对于稀疏多项式，更适合用链表表示，每个节点存储一个非零项的系数和指数。
-
-\begin{verbatim}
-typedef struct PolyNode {
-    float coef;             // 系数
-    int expon;              // 指数
-    struct PolyNode *next;  // 指向下一项的指针
-} PolyNode, *PolyList;
-\end{verbatim}
-
-\paragraph{多项式的加法}
-利用链表表示的多项式，可以实现高效的加法操作：
-
-\begin{verbatim}
-PolyList PolyAdd(PolyList PA, PolyList PB) {
-    PolyList PC = (PolyList)malloc(sizeof(PolyNode));  // 创建结果多项式的头节点
-    PC->next = NULL;
-    PolyList p = PA->next, q = PB->next, r = PC;  // p、q分别指向PA、PB的第一个节点，r指向PC的尾节点
-
-    while (p && q) {
-        if (p->expon == q->expon) {  // 指数相等，系数相加
-            float sum = p->coef + q->coef;
-            if (sum != 0.0) {  // 和不为0时才创建新节点
-                PolyList s = (PolyList)malloc(sizeof(PolyNode));
-                s->coef = sum;
-                s->expon = p->expon;
-                s->next = NULL;
-                r->next = s;
-                r = s;
-            }
-            p = p->next;
-            q = q->next;
-        } else if (p->expon < q->expon) {  // 将指数较小的项插入结果多项式
-            PolyList s = (PolyList)malloc(sizeof(PolyNode));
-            s->coef = p->coef;
-            s->expon = p->expon;
-            s->next = NULL;
-            r->next = s;
-            r = s;
-            p = p->next;
-        } else {  // p->expon > q->expon
-            PolyList s = (PolyList)malloc(sizeof(PolyNode));
-            s->coef = q->coef;
-            s->expon = q->expon;
-            s->next = NULL;
-            r->next = s;
-            r = s;
-            q = q->next;
-        }
+      \ifnum\i<4
+      \node at (\x+2.25,2.4) {$\bullet$};
+      \draw[->] (\x+2.25,2.4) -- ++(0.75,0);
+      \else
+      \node at (\x+2.25,2.4) {$\emptyset$};
+      \fi
     }
 
-    // 将剩余项复制到结果多项式
-    while (p) {
-        PolyList s = (PolyList)malloc(sizeof(PolyNode));
-        s->coef = p->coef;
-        s->expon = p->expon;
-        s->next = NULL;
-        r->next = s;
-        r = s;
-        p = p->next;
+    \draw[->] (head) -- (2,2.4);
+
+    % 插入操作
+    \node at (4.5,1) {在$a_2$和$a_3$之间插入$x$};
+
+    \node[draw, minimum width=1cm, minimum height=0.8cm] (head2) at (0,0) {head};
+
+    \foreach \i/\x/\data in {1/1/a_1, 2/3/a_2, 3/5/x, 4/7/a_3, 5/9/a_4} {
+      \draw (\x+1,0) rectangle ++(1,0.8);
+      \draw (\x+2,0) rectangle ++(0.5,0.8);
+      \node at (\x+1.5,0.4) {$\data$};
+
+      \ifnum\i<5
+      \node at (\x+2.25,0.4) {$\bullet$};
+      \draw[->] (\x+2.25,0.4) -- ++(0.75,0);
+      \else
+      \node at (\x+2.25,0.4) {$\emptyset$};
+      \fi
     }
 
-    while (q) {
-        PolyList s = (PolyList)malloc(sizeof(PolyNode));
-        s->coef = q->coef;
-        s->expon = q->expon;
-        s->next = NULL;
-        r->next = s;
-        r = s;
-        q = q->next;
-    }
+    \draw[->] (head2) -- (2,0.4);
 
-    return PC;
-}
-\end{verbatim}
+    % 新节点高亮
+    \draw[red, thick] (6,0) rectangle ++(1.5,0.8);
 
-\subsection{线性表的实际应用}
-
-\subsubsection{线性表在数据库中的应用}
-关系型数据库中的表本质上是由记录组成的线性表，每条记录可视为线性表中的一个元素。数据库索引的实现也依赖于各种线性表结构，如B树、B+树等。
-
-\subsubsection{线性表在操作系统中的应用}
-操作系统中的进程调度队列、内存管理的空闲块链表等都是线性表的典型应用。
-
-\subsubsection{线性表在编译器设计中的应用}
-编译器中的符号表、词法分析时的标识符表等都可以使用线性表实现。
-
-\subsection{线性表的高级应用}
-
-\subsubsection{静态链表}
-静态链表是借助数组来描述线性表的链式存储，它既具有顺序表随机访问的特点，又具有链表插入删除方便的特点。
-
-\begin{verbatim}
-// 静态链表结构定义
-#define MAXSIZE 1000
-typedef struct {
-    ElemType data;
-    int next;    // 下一个元素的数组下标
-} SLinkList[MAXSIZE];
-
-// 初始化备用链表
-void InitSpace(SLinkList &space) {
-    for (int i = 0; i < MAXSIZE - 1; i++) {
-        space[i].next = i + 1;
-    }
-    space[MAXSIZE - 1].next = 0;  // 目前静态链表为空，最后一个元素的next为0
-}
-
-// 分配结点
-int Malloc_SL(SLinkList &space) {
-    int i = space[0].next;
-    if (i)
-        space[0].next = space[i].next;
-    return i;
-}
-
-// 回收结点
-void Free_SL(SLinkList &space, int k) {
-    space[k].next = space[0].next;
-    space[0].next = k;
-}
-\end{verbatim}
-
-\subsubsection{线性表的应用——文本编辑器}
-文本编辑器可以将文本的每一行作为线性表中的一个元素，使用双向链表实现可在O(1)时间内实现向上、向下翻页等操作。对于每一行文本，可再用一个线性表表示其中的字符。
-
-\begin{verbatim}
-// 文本编辑器的数据结构（伪代码）
-typedef struct Line {
-    char *text;           // 该行的文本内容
-    int length;           // 该行的长度
-    struct Line *prev;    // 指向前一行
-    struct Line *next;    // 指向后一行
-} Line, *TextEditor;
-
-// 在当前行后插入新行
-Status InsertLine(TextEditor &T, Line *current, char *text) {
-    Line *p = (Line *)malloc(sizeof(Line));
-    if (!p) return ERROR;
-
-    p->text = strdup(text);  // 复制文本
-    p->length = strlen(text);
-
-    p->prev = current;
-    p->next = current->next;
-
-    if (current->next)
-        current->next->prev = p;
-    current->next = p;
-
-    return OK;
-}
-\end{verbatim}
+    % 指针修改
+    \draw[->, red, thick] (5.25,2.4) to[out=-45,in=45] (6.25,0.4);
+    \draw[->, red, thick] (5.25,0.4) -- (6,0.4);
+  \end{tikzpicture}
+  \caption{链表的插入操作示意图}
+\end{figure}
 
 \end{document}
