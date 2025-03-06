@@ -1,0 +1,773 @@
+\documentclass{../../note}
+
+\usepackage{amsthm}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\newtheorem{example}{Example}
+\usepackage{xcolor} % For colored text
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,fit,calc,matrix}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{purple},
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  breaklines=true,
+  frame=single,
+}
+
+\title{数据结构 02}
+\author{isomo}
+
+\begin{document}
+
+\maketitle
+
+考纲内容：
+
+\begin{itemize}
+
+  \item \textbf{栈和队列: }
+    栈的结构特性、基本操作及在顺序存储结构和链式存储结构上基本运算的实现，队列的结构特性、基本操作及在
+    顺序存储结构和链式存储结构上基本运算的实现，栈和队列的基本应用。
+
+  \item \textbf{数组和广义表: }
+    数组的基本概念和存储结构，广义表的定义和存储结构。
+\end{itemize}
+
+\section{栈和队列}
+
+\subsection{栈}
+
+\subsubsection{栈的基本概念}
+
+\textcolor{red}{栈（Stack）的定义}：栈是一种线性表，但限定在表的一端（称为栈顶，top）进行插入和删除。另一端称为栈底（bottom）。
+
+栈的特点是：\textbf{后进先出}（Last In First Out, LIFO）。
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \draw (0,0) -- (0,3) -- (2,3) -- (2,0);
+    \draw (0,0) -- (2,0);
+    \node at (1,-0.3) {栈底 (bottom)};
+    \node at (1,3.3) {栈顶 (top)};
+    \draw[fill=lightgray] (0,0) rectangle (2,0.5);
+    \draw[fill=lightgray] (0,0.5) rectangle (2,1);
+    \draw[fill=lightgray] (0,1) rectangle (2,1.5);
+    \node at (1,0.25) {元素1};
+    \node at (1,0.75) {元素2};
+    \node at (1,1.25) {元素3};
+    \draw[->, thick] (3,2) -- (1.9,1.7);
+    \node at (4,2) {进栈/出栈操作};
+  \end{tikzpicture}
+  \caption{栈的结构示意图}
+\end{figure}
+
+\subsubsection{栈的基本操作}
+
+栈的基本操作包括：
+
+\begin{itemize}
+  \item \textcolor{blue}{InitStack(\&S)}：初始化栈，构造一个空栈S
+  \item \textcolor{blue}{StackEmpty(S)}：判断栈是否为空
+  \item \textcolor{blue}{Push(\&S, x)}：进栈，将元素x压入栈S
+  \item \textcolor{blue}{Pop(\&S, \&x)}：出栈，弹出栈顶元素并通过x返回
+  \item \textcolor{blue}{GetTop(S, \&x)}：读栈顶元素，通过x返回栈顶元素（不改变栈）
+  \item \textcolor{blue}{ClearStack(\&S)}：清空栈
+\end{itemize}
+
+\subsubsection{栈的顺序存储结构}
+
+顺序栈通常使用一维数组和一个指向栈顶的指针来实现：
+
+\begin{lstlisting}[language=C]
+#define MaxSize 100  // 栈的最大容量
+typedef struct {
+    ElemType data[MaxSize];  // 存放栈中元素的数组
+    int top;                 // 栈顶指针
+} SqStack;
+\end{lstlisting}
+
+栈顶指针 \texttt{top} 的含义：
+\begin{itemize}
+  \item 初始化时，\texttt{top = -1}
+  \item 进栈操作：先 \texttt{top++}，再存入元素
+  \item 出栈操作：先取出栈顶元素，再 \texttt{top--}
+\end{itemize}
+
+\textcolor{blue}{栈的基本操作实现}：
+
+1. 初始化
+\begin{lstlisting}[language=C]
+void InitStack(SqStack *S) {
+    S->top = -1;
+}
+\end{lstlisting}
+
+2. 判断栈空
+\begin{lstlisting}[language=C]
+bool StackEmpty(SqStack S) {
+    return S.top == -1;
+}
+\end{lstlisting}
+
+3. 进栈操作
+\begin{lstlisting}[language=C]
+bool Push(SqStack *S, ElemType x) {
+    if(S->top == MaxSize-1)  // 栈满
+        return false;
+    S->top++;
+    S->data[S->top] = x;
+    return true;
+}
+\end{lstlisting}
+
+4. 出栈操作
+\begin{lstlisting}[language=C]
+bool Pop(SqStack *S, ElemType *x) {
+    if(S->top == -1)  // 栈空
+        return false;
+    *x = S->data[S->top];
+    S->top--;
+    return true;
+}
+\end{lstlisting}
+
+5. 获取栈顶元素
+\begin{lstlisting}[language=C]
+bool GetTop(SqStack S, ElemType *x) {
+    if(S.top == -1)  // 栈空
+        return false;
+    *x = S.data[S.top];
+    return true;
+}
+\end{lstlisting}
+
+\subsubsection{栈的链式存储结构}
+
+链栈通常使用单链表实现，且规定所有操作都在链表的头部进行：
+
+\begin{lstlisting}[language=C]
+typedef struct LinkNode {
+    ElemType data;
+    struct LinkNode *next;
+} LinkNode, *LinkStack;
+\end{lstlisting}
+
+\textcolor{blue}{链栈的基本操作实现}：
+
+1. 初始化
+\begin{lstlisting}[language=C]
+void InitStack(LinkStack *S) {
+    *S = NULL;
+}
+\end{lstlisting}
+
+2. 判断栈空
+\begin{lstlisting}[language=C]
+bool StackEmpty(LinkStack S) {
+    return S == NULL;
+}
+\end{lstlisting}
+
+3. 进栈操作
+\begin{lstlisting}[language=C]
+void Push(LinkStack *S, ElemType x) {
+    LinkNode *p = (LinkNode *)malloc(sizeof(LinkNode));
+    p->data = x;
+    p->next = *S;
+    *S = p;
+}
+\end{lstlisting}
+
+4. 出栈操作
+\begin{lstlisting}[language=C]
+bool Pop(LinkStack *S, ElemType *x) {
+    if(*S == NULL)
+        return false;
+    LinkNode *p = *S;
+    *x = p->data;
+    *S = p->next;
+    free(p);
+    return true;
+}
+\end{lstlisting}
+
+5. 获取栈顶元素
+\begin{lstlisting}[language=C]
+bool GetTop(LinkStack S, ElemType *x) {
+    if(S == NULL)
+        return false;
+    *x = S->data;
+    return true;
+}
+\end{lstlisting}
+
+\subsection{队列}
+
+\subsubsection{队列的基本概念}
+
+\textcolor{red}{队列（Queue）的定义}：队列是一种线性表，限定在表的一端（称为队尾，rear）进行插入，在另一端（称为队头，front）进行删除。
+
+队列的特点是：\textbf{先进先出}（First In First Out, FIFO）。
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \draw (0,0) rectangle (5,1);
+    \draw (1,0) -- (1,1);
+    \draw (2,0) -- (2,1);
+    \draw (3,0) -- (3,1);
+    \draw (4,0) -- (4,1);
+    \node at (0.5,0.5) {1};
+    \node at (1.5,0.5) {2};
+    \node at (2.5,0.5) {3};
+    \node at (3.5,0.5) {4};
+    \node at (4.5,0.5) {5};
+    \draw[->, thick] (-1,0.5) -- (0,0.5);
+    \draw[->, thick] (5,0.5) -- (6,0.5);
+    \node at (-1,1) {队头(front)};
+    \node at (6,1) {队尾(rear)};
+    \node at (-1,0) {删除};
+    \node at (6,0) {插入};
+  \end{tikzpicture}
+  \caption{队列的结构示意图}
+\end{figure}
+
+\subsubsection{队列的基本操作}
+
+队列的基本操作包括：
+
+\begin{itemize}
+  \item \textcolor{blue}{InitQueue(\&Q)}：初始化队列，构造一个空队列Q
+  \item \textcolor{blue}{QueueEmpty(Q)}：判断队列是否为空
+  \item \textcolor{blue}{EnQueue(\&Q, x)}：入队，将元素x加入队列Q
+  \item \textcolor{blue}{DeQueue(\&Q, \&x)}：出队，删除队头元素并通过x返回
+  \item \textcolor{blue}{GetHead(Q, \&x)}：读取队头元素，通过x返回队头元素（不改变队列）
+\end{itemize}
+
+\subsubsection{队列的顺序存储结构}
+
+顺序队列通常使用一维数组和两个指针（队头指针front和队尾指针rear）来实现：
+
+\begin{lstlisting}[language=C]
+#define MaxSize 100
+typedef struct {
+    ElemType data[MaxSize];
+    int front, rear;
+} SqQueue;
+\end{lstlisting}
+
+简单队列在多次入队出队操作后可能会出现"假溢出"现象（队列实际未满，但队尾指针已达数组尾部）。为解决这个问题，通常采用循环队列实现。
+
+\textcolor{red}{循环队列}的特点：
+\begin{itemize}
+  \item 队列元素在内存中的空间是环状的
+  \item 初始时，\texttt{front = rear = 0}
+  \item 入队：\texttt{rear = (rear+1) \% MaxSize}
+  \item 出队：\texttt{front = (front+1) \% MaxSize}
+\end{itemize}
+
+\colorbox{yellow}{判断队列空和队列满的条件}：
+\begin{itemize}
+  \item 队空：\texttt{front == rear}
+  \item 队满：\texttt{(rear+1) \% MaxSize == front}（牺牲一个存储单元）
+\end{itemize}
+
+\textcolor{blue}{循环队列的基本操作实现}：
+
+1. 初始化
+\begin{lstlisting}[language=C]
+void InitQueue(SqQueue *Q) {
+    Q->front = Q->rear = 0;
+}
+\end{lstlisting}
+
+2. 判断队空
+\begin{lstlisting}[language=C]
+bool QueueEmpty(SqQueue Q) {
+    return Q.front == Q.rear;
+}
+\end{lstlisting}
+
+3. 入队操作
+\begin{lstlisting}[language=C]
+bool EnQueue(SqQueue *Q, ElemType x) {
+    if((Q->rear+1) % MaxSize == Q->front)  // 队满
+        return false;
+    Q->data[Q->rear] = x;
+    Q->rear = (Q->rear+1) % MaxSize;
+    return true;
+}
+\end{lstlisting}
+
+4. 出队操作
+\begin{lstlisting}[language=C]
+bool DeQueue(SqQueue *Q, ElemType *x) {
+    if(Q->front == Q->rear)  // 队空
+        return false;
+    *x = Q->data[Q->front];
+    Q->front = (Q->front+1) % MaxSize;
+    return true;
+}
+\end{lstlisting}
+
+5. 获取队头元素
+\begin{lstlisting}[language=C]
+bool GetHead(SqQueue Q, ElemType *x) {
+    if(Q.front == Q.rear)  // 队空
+        return false;
+    *x = Q.data[Q.front];
+    return true;
+}
+\end{lstlisting}
+
+\subsubsection{队列的链式存储结构}
+
+链式队列通常用带头结点的单链表实现，front指向队头结点，rear指向队尾结点：
+
+\begin{lstlisting}[language=C]
+typedef struct LinkNode {
+    ElemType data;
+    struct LinkNode *next;
+} LinkNode;
+
+typedef struct {
+    LinkNode *front, *rear;
+} LinkQueue;
+\end{lstlisting}
+
+\textcolor{blue}{链式队列的基本操作实现}：
+
+1. 初始化（带头结点）
+\begin{lstlisting}[language=C]
+void InitQueue(LinkQueue *Q) {
+    Q->front = Q->rear = (LinkNode *)malloc(sizeof(LinkNode));
+    Q->front->next = NULL;
+}
+\end{lstlisting}
+
+2. 判断队空
+\begin{lstlisting}[language=C]
+bool QueueEmpty(LinkQueue Q) {
+    return Q.front == Q.rear;
+}
+\end{lstlisting}
+
+3. 入队操作
+\begin{lstlisting}[language=C]
+void EnQueue(LinkQueue *Q, ElemType x) {
+    LinkNode *p = (LinkNode *)malloc(sizeof(LinkNode));
+    p->data = x;
+    p->next = NULL;
+    Q->rear->next = p;
+    Q->rear = p;
+}
+\end{lstlisting}
+
+4. 出队操作
+\begin{lstlisting}[language=C]
+bool DeQueue(LinkQueue *Q, ElemType *x) {
+    if(Q->front == Q->rear)  // 队空
+        return false;
+    LinkNode *p = Q->front->next;
+    *x = p->data;
+    Q->front->next = p->next;
+    if(Q->rear == p)  // 最后一个结点出队
+        Q->rear = Q->front;
+    free(p);
+    return true;
+}
+\end{lstlisting}
+
+\subsection{栈和队列的应用}
+
+\subsubsection{栈的应用}
+
+1. \textcolor{blue}{括号匹配问题}：检查括号是否匹配，例如 "(()[()])" 是匹配的，而 "([)]" 不匹配。
+
+2. \textcolor{blue}{表达式求值}：利用栈实现中缀表达式转后缀表达式，再计算后缀表达式的值。
+
+3. \textcolor{blue}{递归实现}：利用栈实现递归，避免使用系统栈。
+
+4. \textcolor{blue}{函数调用}：程序中的函数调用使用栈来保存返回地址和局部变量。
+
+5. \textcolor{blue}{浏览器的前进/后退功能}：利用两个栈来实现。
+
+\begin{example}
+  使用栈实现括号匹配的算法：
+\begin{lstlisting}[language=C]
+bool bracketMatch(char str[]) {
+    Stack S;
+    InitStack(&S);
+    for(int i = 0; str[i] != '\0'; i++) {
+        if(str[i] == '(' || str[i] == '[' || str[i] == '{') {
+            Push(&S, str[i]);
+        } else if(str[i] == ')' || str[i] == ']' || str[i] == '}') {
+            if(StackEmpty(S))
+                return false;
+            char topChar;
+            Pop(&S, &topChar);
+            if(str[i] == ')' && topChar != '(')
+                return false;
+            if(str[i] == ']' && topChar != '[')
+                return false;
+            if(str[i] == '}' && topChar != '{')
+                return false;
+        }
+    }
+    return StackEmpty(S);
+}
+\end{lstlisting}
+\end{example}
+
+\subsubsection{队列的应用}
+
+1. \textcolor{blue}{层次遍历}：广度优先搜索（BFS）算法中使用队列。
+
+2. \textcolor{blue}{消息缓冲区}：在消息传递系统中作为消息的缓冲区。
+
+3. \textcolor{blue}{打印机任务队列}：管理打印任务。
+
+4. \textcolor{blue}{操作系统中的作业调度}：先来先服务（FCFS）调度算法。
+
+5. \textcolor{blue}{计算机网络中的数据包队列}：路由器中的数据包队列。
+
+\begin{example}
+  使用队列实现二叉树层次遍历的算法：
+\begin{lstlisting}[language=C]
+void levelOrder(BiTree T) {
+    Queue Q;
+    InitQueue(&Q);
+    if(T != NULL)
+        EnQueue(&Q, T);
+    while(!QueueEmpty(Q)) {
+        BiTree p;
+        DeQueue(&Q, &p);
+        printf("%d ", p->data);
+        if(p->lchild != NULL)
+            EnQueue(&Q, p->lchild);
+        if(p->rchild != NULL)
+            EnQueue(&Q, p->rchild);
+    }
+}
+\end{lstlisting}
+\end{example}
+
+\section{数组和广义表}
+
+\subsection{数组}
+
+\subsubsection{数组的基本概念}
+
+\textcolor{red}{数组（Array）的定义}：数组是由n个相同类型的数据元素构成的有限序列，每个数据元素称为一个数组元素。在内存中，数组占用一块连续的存储空间。
+
+数组的特点：
+\begin{itemize}
+  \item 数组中的所有元素具有相同的数据类型
+  \item 数组元素在内存中按照一定的顺序连续存储
+  \item 可以通过下标（索引）直接访问任何一个数组元素
+\end{itemize}
+
+一维数组可表示为 $A[0:n-1]$ 或 $A[1:n]$，其中 $A[i]$ 表示第 $i$ 个元素。
+
+\subsubsection{数组的存储结构}
+
+\textbf{数组的基本存储策略}：\textcolor{blue}{随机存取（Random Access）}，通过公式计算元素的存储位置。
+
+\paragraph{一维数组的存储}
+
+假设一维数组 $A[0:n-1]$ 的起始地址为 $base$，每个元素占用 $size$ 个存储单元，则数组元素 $A[i]$ 的存储地址计算公式为：
+
+\begin{equation}
+  Loc(A[i]) = base + i \times size
+\end{equation}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \draw (0,0) rectangle (8,1);
+    \foreach \x in {1,2,...,7}
+    \draw (\x,0) -- (\x,1);
+    \foreach \x/\l in {0.5/A[0], 1.5/A[1], 2.5/A[2], 3.5/A[3], 4.5/A[4], 5.5/A[5], 6.5/A[6], 7.5/A[7]}
+    \node at (\x,0.5) {\l};
+    \draw [decorate,decoration={brace,amplitude=5pt}] (0,1.2) -- (8,1.2) node [midway,above=4pt] {内存连续存储};
+    \node at (0,-0.3) {base};
+    \node at (8,-0.3) {base + n*size};
+  \end{tikzpicture}
+  \caption{一维数组的存储结构示意图}
+\end{figure}
+
+\paragraph{多维数组的存储}
+
+对于二维数组 $A[0:m-1][0:n-1]$，有两种常见的存储方式：
+
+\colorbox{yellow}{行优先存储}：先存储第0行，再存储第1行，依此类推。
+\begin{equation}
+  Loc(A[i][j]) = base + (i \times n + j) \times size
+\end{equation}
+
+\colorbox{yellow}{列优先存储}：先存储第0列，再存储第1列，依此类推。
+\begin{equation}
+  Loc(A[i][j]) = base + (j \times m + i) \times size
+\end{equation}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \draw (0,0) grid (4,3);
+    \foreach \i/\j/\l in {0.5/2.5/A[0][0], 1.5/2.5/A[0][1], 2.5/2.5/A[0][2], 3.5/2.5/A[0][3],
+      0.5/1.5/A[1][0], 1.5/1.5/A[1][1], 2.5/1.5/A[1][2], 3.5/1.5/A[1][3],
+    0.5/0.5/A[2][0], 1.5/0.5/A[2][1], 2.5/0.5/A[2][2], 3.5/0.5/A[2][3]}
+    \node at (\i,\j) {\l};
+
+    \draw[->, thick] (5,3) to[out=0,in=90] (6,2.5);
+    \node at (5,3.3) {行优先顺序};
+
+    \draw (6,0) rectangle (14,1);
+    \foreach \x in {7,8,...,13}
+    \draw (\x,0) -- (\x,1);
+    \foreach \x/\l in {6.5/A[0][0], 7.5/A[0][1], 8.5/A[0][2], 9.5/A[0][3], 10.5/A[1][0], 11.5/A[1][1], 12.5/A[1][2], 13.5/A[1][3]}
+    \node at (\x,0.5) {\l};
+  \end{tikzpicture}
+  \caption{二维数组的行优先存储示意图}
+\end{figure}
+
+对于更高维的数组，存储地址计算公式可以类推得到。
+
+\subsubsection{特殊矩阵的压缩存储}
+
+为了节省存储空间，对于一些特殊矩阵，可以采用压缩存储的方式。
+
+\paragraph{对称矩阵}
+
+\textcolor{red}{对称矩阵（Symmetric Matrix）}：若对于 $n$ 阶方阵 $A$ 中的任意元素 $a_{ij} = a_{ji}$ $(i,j = 1,2,...,n)$，则称 $A$ 为对称矩阵。
+
+对称矩阵只需存储主对角线和下（或上）三角区域的元素，共需存储 $\frac{n(n+1)}{2}$ 个元素。
+
+\colorbox{yellow}{一维数组存储映射公式}：
+\begin{equation}
+  k =
+  \begin{cases}
+    \frac{i(i-1)}{2} + j - 1, & \text{当} i \geq j \text{（存储下三角）} \\
+    \frac{j(j-1)}{2} + i - 1, & \text{当} i < j \text{（存储上三角）}
+  \end{cases}
+\end{equation}
+
+\paragraph{三角矩阵}
+
+\textcolor{red}{三角矩阵（Triangular Matrix）}：上三角矩阵的下三角部分（不含主对角线）的元素全为同一常数，下三角矩阵的上三角部分（不含主对角线）的元素全为同一常数。
+
+\paragraph{对角矩阵}
+
+\textcolor{red}{对角矩阵（Diagonal Matrix）}：主对角线两侧各有不超过 $s$ 条对角线上的元素可能非零，其余元素全为0的矩阵，也称为带状矩阵。
+
+\paragraph{稀疏矩阵}
+
+\textcolor{red}{稀疏矩阵（Sparse Matrix）}：矩阵中非零元素的个数远远少于矩阵元素总数，并且非零元素的分布没有规律。
+
+通常采用三元组表示法存储稀疏矩阵：
+\begin{lstlisting}[language=C]
+typedef struct {
+    int row;      // 行号
+    int col;      // 列号
+    ElemType val; // 值
+} Triple;
+
+typedef struct {
+    Triple data[MAXSIZE+1]; // 非零元素的三元组表
+    int rows, cols;         // 矩阵的行数、列数
+    int nums;               // 非零元素的个数
+} SparseMatrix;
+\end{lstlisting}
+
+\subsubsection{矩阵的基本运算}
+
+\paragraph{矩阵的转置}
+
+矩阵转置是将矩阵 $A$ 的行与列互换得到矩阵 $B$，即 $b_{ij} = a_{ji}$。
+
+\textcolor{blue}{普通矩阵转置算法}：
+\begin{lstlisting}[language=C]
+void TransposeMatrix(SparseMatrix A, SparseMatrix *B) {
+    B->rows = A.cols; B->cols = A.rows; B->nums = A.nums;
+    if(B->nums > 0) {
+        int q = 1;
+        for(int col = 0; col < A.cols; col++) {
+            for(int p = 1; p <= A.nums; p++) {
+                if(A.data[p].col == col) {
+                    B->data[q].row = A.data[p].col;
+                    B->data[q].col = A.data[p].row;
+                    B->data[q].val = A.data[p].val;
+                    q++;
+                }
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+\paragraph{矩阵的乘法}
+
+两个矩阵相乘，左矩阵的列数必须等于右矩阵的行数。
+
+\textcolor{blue}{普通矩阵乘法算法}：
+\begin{lstlisting}[language=C]
+void MultiplyMatrix(int A[][N], int B[][P], int C[][P], int m, int n, int p) {
+    for(int i = 0; i < m; i++) {
+        for(int j = 0; j < p; j++) {
+            C[i][j] = 0;
+            for(int k = 0; k < n; k++) {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{广义表}
+
+\subsubsection{广义表的定义}
+
+\textcolor{red}{广义表（Generalized List）的定义}：广义表是一种非线性的数据结构，其元素可以是原子（不可分割的数据元素）或者是广义表。
+
+用 $LS$ 表示一个广义表，$n$ 是表的长度，则其形式定义为：
+\begin{equation}
+  LS = (a_1, a_2, \ldots, a_n)
+\end{equation}
+
+其中，$a_i$ 可以是原子，也可以是广义表。如果 $a_i$ 是广义表，则称为 $LS$ 的子表。
+
+广义表的基本特点：
+\begin{itemize}
+  \item 广义表的元素可以是原子，也可以是广义表
+  \item 广义表可以为空表，此时 $n=0$
+  \item 广义表可以嵌套定义
+  \item 广义表的长度是指第一层元素的个数
+  \item 广义表的深度是指嵌套的最大层数
+\end{itemize}
+
+\begin{example}
+  广义表示例：
+  \begin{enumerate}
+    \item $A = ()$：空表，长度为0，深度为1
+    \item $B = (a, b, c)$：长度为3，深度为1
+    \item $C = (a, (b, c), d)$：长度为3，深度为2
+    \item $D = (a, (b, (c, d), e), f)$：长度为3，深度为3
+    \item $E = ((a, b), (c, d), (e, f))$：长度为3，深度为2
+  \end{enumerate}
+\end{example}
+
+\subsubsection{广义表的存储结构}
+
+\paragraph{头尾链表存储表示}
+
+每个结点包含三个域：
+\begin{itemize}
+  \item 标志域（Tag）：区分原子结点和表结点
+  \item 结点值域：
+    \begin{itemize}
+      \item 对于原子结点，值域存储原子的值
+      \item 对于表结点，值域是指向子表的第一个元素的指针（Head）
+    \end{itemize}
+  \item 指针域（Tail）：指向当前结点所在表中的下一个元素
+\end{itemize}
+
+\begin{lstlisting}[language=C]
+typedef enum {ATOM, LIST} ElemTag;  // ATOM=0：原子，LIST=1：子表
+typedef struct GLNode {
+    ElemTag tag;              // 标志域
+    union {                   // 值域
+        AtomType atom;        // tag=ATOM时，存储原子值
+        struct {              // tag=LIST时
+            struct GLNode *hp; // 指向表头
+            struct GLNode *tp; // 指向表尾
+        } ptr;
+    };
+} GLNode, *GList;
+\end{lstlisting}
+
+\paragraph{扩展线性链表存储表示}
+
+每个结点有三个域：
+\begin{itemize}
+  \item 标志域（Tag）：区分原子结点和表结点
+  \item 数据域：
+    \begin{itemize}
+      \item 对于原子结点，数据域存储原子的值
+      \item 对于表结点，数据域是指向子表的指针
+    \end{itemize}
+  \item 指针域（Next）：指向下一个元素
+\end{itemize}
+
+\begin{lstlisting}[language=C]
+typedef enum {ATOM, LIST} ElemTag;  // ATOM=0：原子，LIST=1：子表
+typedef struct GLNode {
+    ElemTag tag;                   // 标志域
+    union {                        // 值域
+        AtomType atom;             // tag=ATOM时，存储原子值
+        struct GLNode *sublist;    // tag=LIST时，指向子表
+    } val;
+    struct GLNode *next;           // 指向下一个元素
+} GLNode, *GList;
+\end{lstlisting}
+
+\subsubsection{广义表的基本操作}
+
+\textcolor{blue}{广义表的基本操作}包括：
+\begin{itemize}
+  \item 求广义表的长度（第一层元素的个数）
+  \item 求广义表的深度（嵌套的最大层数）
+  \item 复制广义表
+  \item 创建广义表
+\end{itemize}
+
+求广义表的深度
+
+\begin{lstlisting}[language=C]
+int GListDepth(GList L) {
+    if(!L) return 1;  // 空表深度为1
+
+    if(L->tag == ATOM) return 0;  // 原子深度为0
+
+    int max = 0;
+    int dep;
+    GList p = L->val.sublist;  // p指向子表
+
+    while(p) {
+        dep = GListDepth(p);
+        if(dep > max) max = dep;
+        p = p->next;
+    }
+
+    return max + 1;  // 当前层深度+1
+}
+\end{lstlisting}
+
+复制广义表
+\begin{lstlisting}[language=C]
+void CopyGList(GList *T, GList L) {
+    *T = NULL;
+    if(!L) return;
+
+    *T = (GList)malloc(sizeof(GLNode));
+    (*T)->tag = L->tag;
+
+    if(L->tag == ATOM) {
+        (*T)->val.atom = L->val.atom;
+    } else {
+        CopyGList(&((*T)->val.sublist), L->val.sublist);
+    }
+
+    CopyGList(&((*T)->next), L->next);
+}
+\end{lstlisting}
+
+\end{document}
