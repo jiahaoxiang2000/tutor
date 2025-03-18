@@ -1,0 +1,509 @@
+\documentclass{../../note}
+
+\usepackage{amsthm}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\newtheorem{example}{Example}
+\usepackage{xcolor} % For colored text
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,fit,calc,matrix,decorations.pathreplacing}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{purple},
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  breaklines=true,
+  frame=single,
+}
+
+\title{数据库 01}
+\author{isomo}
+
+\begin{document}
+
+\maketitle
+
+考纲内容：
+
+\begin{itemize}
+
+  \item \textbf{绪论}\\
+    数据库的4个基本概念，数据管理技术的产生和发展，数据建模、概念模型和数据模型的三要素，数据库系统的三级模式结构，数据库的两级映像与数据独立性，数据库系统的组成。
+
+  \item \textbf{关系模型}\\
+    关系模型的数据结构及形式化定义，关系操作，关系完整性，关系代数（传统的集合运算、专门的关系运算）。
+
+  \item \textbf{关系数据库标准语言SQL}\\
+    数据定义、数据查询、数据更新、空值处理、视图。ss
+
+  \item \textbf{数据库安全性}\\
+    数据库安全性概述，数据库安全性控制。
+
+\end{itemize}
+
+\section{绪论}
+
+\subsection{数据库的基本概念}
+
+数据库系统的四个基本概念：
+
+\begin{enumerate}
+  \item \textcolor{red}{数据 (Data)}：描述事物的符号记录，是数据库中存储的基本对象。
+
+  \item \textcolor{red}{数据库 (Database, DB)}：长期存储在计算机内、有组织的、可共享的大量数据的集合。数据库中的数据具有如下特点：
+    \begin{itemize}
+      \item 永久存储
+      \item 有组织
+      \item 可共享
+    \end{itemize}
+
+  \item \textcolor{red}{数据库管理系统 (Database Management System, DBMS)}：位于用户与操作系统之间的一层数据管理软件，是基础软件，是一个大型复杂的软件系统。
+
+  \item \textcolor{red}{数据库系统 (Database System, DBS)}：由数据库、数据库管理系统（及其应用开发工具）、应用程序和数据库管理员（DBA）组成的存储、管理、处理和维护数据的系统。
+\end{enumerate}
+
+\subsection{数据管理技术的产生和发展}
+
+数据管理技术的发展经历了三个阶段：
+
+\begin{enumerate}
+  \item \textbf{人工管理阶段}（20世纪50年代中期以前）
+    \begin{itemize}
+      \item 数据不保存
+      \item 应用程序管理数据
+      \item 缺点：数据不可共享、数据冗余度大、数据不一致性
+    \end{itemize}
+
+  \item \textbf{文件系统阶段}（20世纪50年代中期至60年代中期）
+    \begin{itemize}
+      \item 数据可长期保存
+      \item 文件系统实现对数据的管理
+      \item 缺点：数据共享性差、数据冗余大、数据独立性差
+    \end{itemize}
+
+  \item \textbf{数据库系统阶段}（20世纪60年代末至今）
+    \begin{itemize}
+      \item 数据结构化
+      \item 数据共享性高，冗余度低
+      \item 数据独立性高
+      \item 由DBMS统一管理和控制
+    \end{itemize}
+\end{enumerate}
+
+\subsection{数据建模与数据模型}
+
+\subsubsection{数据建模}
+
+\textcolor{red}{数据建模}是抽象、表示和处理现实世界中数据的方法和过程。
+
+\subsubsection{概念模型}
+
+\textcolor{red}{概念模型}是按用户的观点来对数据和信息建模，主要用于数据库设计。
+
+最常用的概念模型是\textcolor{blue}{实体-联系模型 (E-R模型)}，它由下列要素组成：
+\begin{itemize}
+  \item 实体(Entity)：客观存在并可相互区别的事物
+  \item 属性(Attribute)：实体所具有的某一特性
+  \item 联系(Relationship)：实体之间的关联
+\end{itemize}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 绘制实体
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (student) {学生};
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm, right=4cm of student] (course) {课程};
+
+    % 绘制联系
+    \node[draw, diamond, aspect=2, minimum width=2cm, minimum height=1cm] (sc) at ($(student)!0.5!(course)$) {选修};
+
+    % 连接线
+    \draw (student) -- (sc);
+    \draw (sc) -- (course);
+
+    % 标注关系
+    \node[above] at ($(student)!0.25!(sc)$) {1:n};
+    \node[above] at ($(course)!0.25!(sc)$) {1:n};
+  \end{tikzpicture}
+  \caption{E-R图示例：学生-课程关系}
+\end{figure}
+
+\subsubsection{数据模型的三要素}
+
+\textcolor{red}{数据模型}是对现实世界数据特征的抽象，由三部分组成：
+
+\begin{enumerate}
+  \item \textbf{数据结构}：描述数据库的组成对象及对象间的联系
+  \item \textbf{数据操作}：对数据库中各种对象实例允许执行的操作及操作规则
+  \item \textbf{数据约束}：保证数据库中数据满足特定语义规则的条件
+\end{enumerate}
+
+按照抽象级别，数据模型可分为：
+\begin{itemize}
+  \item \textbf{概念模型}：面向用户，如E-R模型
+  \item \textbf{逻辑模型}：面向DBMS，如层次模型、网状模型、关系模型、面向对象模型等
+  \item \textbf{物理模型}：面向存储，描述数据在存储介质上的实际组织方式
+\end{itemize}
+
+\subsection{数据库系统的三级模式结构}
+
+ANSI/SPARC提出的三级模式结构包括：
+
+\begin{enumerate}
+  \item \textcolor{red}{外模式 (External Schema)}：也称为用户模式，是用户与数据库系统的接口，由若干外部视图组成。
+
+  \item \textcolor{red}{模式 (Schema)}：也称为概念模式，是数据库中全体数据的逻辑结构和特征的描述，是所有用户的公共数据视图。
+
+  \item \textcolor{red}{内模式 (Internal Schema)}：也称为存储模式，是数据物理结构和存储方式的描述，是数据在存储介质上的表示方式和存取方法。
+\end{enumerate}
+
+\colorbox{yellow}{注：此处三种模式，其实对应用户，软件开发者和数据库开发人员。}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 创建三级模式框
+    \node[draw, minimum width=10cm, minimum height=1.2cm] (ext) {外模式1 \hspace{2cm} 外模式2 \hspace{2cm} 外模式3};
+    \node[draw, minimum width=10cm, minimum height=1.2cm, below=1cm of ext] (schema) {模式（概念模式）};
+    \node[draw, minimum width=10cm, minimum height=1.2cm, below=1cm of schema] (int) {内模式（存储模式）};
+    \node[draw, minimum width=10cm, minimum height=1.2cm, below=1cm of int] (db) {数据库};
+
+    % 添加映射
+    \draw[<->] (ext.south) -- (schema.north) node[midway, right] {外模式/模式映射};
+    \draw[<->] (schema.south) -- (int.north) node[midway, right] {模式/内模式映射};
+    \draw[<->] (int.south) -- (db.north);
+  \end{tikzpicture}
+  \caption{数据库系统的三级模式结构}
+\end{figure}
+
+\subsection{数据库的两级映像与数据独立性}
+
+\subsubsection{两级映像}
+
+\begin{enumerate}
+  \item \textcolor{blue}{外模式/模式映像}：定义外模式与模式之间的对应关系，当模式改变时，对应的外模式/模式映像也需要改变。
+
+  \item \textcolor{blue}{模式/内模式映像}：定义模式与内模式之间的对应关系，当内模式改变时，对应的模式/内模式映像也需要改变。
+\end{enumerate}
+
+\subsubsection{数据独立性}
+
+\begin{enumerate}
+  \item \textcolor{red}{物理数据独立性}：当数据库的内模式改变时，只需要修改模式/内模式映像，使模式保持不变，应用程序不受影响。
+
+  \item \textcolor{red}{逻辑数据独立性}：当数据库的模式改变时，只需要修改外模式/模式映像，使外模式保持不变，应用程序不受影响。
+\end{enumerate}
+
+数据独立性是数据库系统的重要特征，它保证了应用程序和数据库结构的相对独立，从而提高了数据库系统的可维护性和扩展性。
+
+\subsection{数据库系统的组成}
+
+数据库系统由以下几部分组成：
+
+\begin{enumerate}
+  \item \textbf{硬件平台}：计算机、存储设备和网络设备等
+
+  \item \textbf{数据库}：存储在计算机中的数据集合
+
+  \item \textbf{DBMS}：管理数据库的软件
+
+  \item \textbf{应用程序}：为用户提供操作界面的程序
+
+  \item \textbf{数据库管理员(DBA)}：负责数据库的规划、设计、维护和管理
+
+  \item \textbf{用户}：使用数据库的人，包括最终用户、应用程序员和DBA
+\end{enumerate}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 创建一个矩阵节点以对齐所有元素
+    \matrix [column sep=0.5cm, row sep=0.4cm] {
+      % 用户层
+      \node[draw, minimum width=2cm, minimum height=0.8cm] (eu) {最终用户}; &
+      \node[draw, minimum width=2cm, minimum height=0.8cm] (ap) {应用程序员}; &
+      \node[draw, minimum width=2cm, minimum height=0.8cm] (dba) {DBA}; \\
+
+      % 应用层
+      \node[draw, minimum width=7cm, minimum height=0.8cm] (apps) {应用程序}; \\
+
+      % DBMS层
+      \node[draw, minimum width=7cm, minimum height=1.2cm] (dbms) {
+        数据库管理系统(DBMS)
+      }; \\
+
+      % 数据层
+      \node[draw, minimum width=7cm, minimum height=0.8cm] (db) {数据库}; \\
+
+      % 硬件层
+      \node[draw, minimum width=7cm, minimum height=0.8cm] (hw) {硬件}; \\
+    };
+
+    % 连接各层
+    \draw[->] (eu) -- (apps);
+    \draw[->] (ap) -- (apps);
+    \draw[->] (dba) -- (dbms);
+    \draw[->] (apps) -- (dbms);
+    \draw[<->] (dbms) -- (db);
+    \draw[<->] (db) -- (hw);
+  \end{tikzpicture}
+  \caption{数据库系统的组成}
+\end{figure}
+
+\subsection{小结}
+
+\begin{itemize}
+  \item 数据库系统的四个基本概念：数据、数据库、数据库管理系统和数据库系统
+  \item 数据管理技术的发展经历了人工管理、文件系统和数据库系统三个阶段
+  \item 数据模型由数据结构、数据操作和数据约束三要素组成
+  \item 数据库系统采用三级模式结构：外模式、模式和内模式
+  \item 数据库的两级映像支持物理数据独立性和逻辑数据独立性
+  \item 数据库系统由硬件、软件、数据、人员等组成部分构成
+\end{itemize}
+
+\section{关系模型}
+
+\subsection{关系模型的数据结构}
+
+关系模型是目前最重要的数据库模型，由E.F.Codd于1970年首先提出。关系模型的基本数据结构非常简单，就是关系，即二维表格结构。
+
+\subsubsection{关系的形式化定义}
+
+设有$n$个域$D_1, D_2, \ldots, D_n$，它们的笛卡尔积为：
+\begin{align}
+  D_1 \times D_2 \times \ldots \times D_n = \{(d_1, d_2, \ldots, d_n) | d_i \in D_i, i = 1, 2, \ldots, n\}
+\end{align}
+
+\textcolor{red}{关系 (Relation)}是笛卡尔积$D_1 \times D_2 \times \ldots \times D_n$的子集，表示为$R(A_1:D_1, A_2:D_2, \ldots, A_n:D_n)$，其中：
+\begin{itemize}
+  \item $R$是关系名
+  \item $A_i$是属性名
+  \item $D_i$是域（属性的取值范围）
+  \item $n$是关系的目或度（Degree），表示关系的属性个数
+  \item 关系中的每个元组（Tuple）对应表中的一行
+  \item 关系模式（Relation Schema）：$R(A_1, A_2, \ldots, A_n)$
+\end{itemize}
+
+\subsubsection{关系的性质}
+
+\begin{enumerate}
+  \item \textcolor{blue}{列是同质的}：每一列中的数据来自同一个域，是同一类型的数据
+  \item \textcolor{blue}{不同的列可来自同一个域}：不同属性可对应相同的域
+  \item \textcolor{blue}{列的顺序无关紧要}：列的次序可以任意交换
+  \item \textcolor{blue}{行的顺序无关紧要}：行的次序可以任意交换
+  \item \textcolor{blue}{行列确定唯一的值}：给定行号和列名后，表中的值唯一确定
+  \item \textcolor{blue}{不允许表中有重复的行（元组）}：任意两个元组在至少一个属性上取值不同
+  \item \textcolor{blue}{每个分量必须是不可分的数据项}：不允许表中的表（非规范化）
+\end{enumerate}
+
+\begin{example}
+  某大学学生关系Student的一个实例：
+
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|}
+      \hline
+      \textbf{Sno} & \textbf{Sname} & \textbf{Ssex} & \textbf{Sage} \\
+      \hline
+      201901 & 李勇 & 男 & 20 \\
+      \hline
+      201902 & 刘晨 & 女 & 19 \\
+      \hline
+      201903 & 王敏 & 女 & 18 \\
+      \hline
+    \end{tabular}
+  \end{center}
+
+  关系模式：Student(Sno, Sname, Ssex, Sage)
+\end{example}
+
+\subsubsection{关系模型中的基本概念}
+
+\begin{enumerate}
+  \item \textcolor{red}{候选键（Candidate Key）}：能唯一标识关系中元组的最小属性集合。
+  \item \textcolor{red}{主键（Primary Key）}：从候选键中选定的一个，用于唯一标识关系中的元组。
+  \item \textcolor{red}{外键（Foreign Key）}：关系R的一个属性（或属性集），它不是R的主键，但是它在另一个关系S中是主键。
+  \item \textcolor{red}{主属性（Prime Attribute）}：包含在任何一个候选键中的属性。
+  \item \textcolor{red}{非主属性（Non-prime Attribute）}：不包含在任何候选键中的属性。
+\end{enumerate}
+
+\subsection{关系操作}
+
+关系模型的操作主要分为查询和更新两类。
+
+\subsubsection{查询操作}
+
+查询操作是关系数据库中最基本的操作，主要包括：
+\begin{itemize}
+  \item 选择（Selection）：从关系中选取满足条件的元组
+  \item 投影（Projection）：从关系中选取指定的列
+  \item 连接（Join）：将两个关系按照共同属性组合成一个关系
+  \item 除法（Division）：A ÷ B，求A中满足B中所有条件的元组
+  \item 并（Union）：两个关系的并集
+  \item 差（Difference）：两个关系的差集
+  \item 交（Intersection）：两个关系的交集
+  \item 笛卡尔积（Cartesian Product）：两个关系的所有可能组合
+\end{itemize}
+
+\subsubsection{更新操作}
+
+更新操作包括：
+\begin{itemize}
+  \item 插入（Insert）：向关系中添加元组
+  \item 删除（Delete）：从关系中删除元组
+  \item 修改（Update）：修改关系中的元组
+\end{itemize}
+
+\subsection{关系完整性}
+
+关系模型中的完整性约束是保证数据库中数据正确性、有效性和相容性的规则，主要包括：
+
+\subsubsection{实体完整性（Entity Integrity）}
+
+\textcolor{red}{实体完整性规则}：关系的主键属性值不能为空（NULL）。
+
+这保证了每个实体（即关系中的每一行）都能被唯一标识。
+
+\subsubsection{参照完整性（Referential Integrity）}
+
+\textcolor{red}{参照完整性规则}：如果关系R的外键F是关系S的主键，则关系R中每个元组在F上的取值必须是：
+\begin{itemize}
+  \item 要么等于关系S中某个元组的主键值
+  \item 要么为空值（如果允许外键取空值）
+\end{itemize}
+
+\subsubsection{用户定义的完整性（User-defined Integrity）}
+
+用户定义的完整性是针对具体应用的约束条件，例如：
+\begin{itemize}
+  \item 属性值的范围约束（例如年龄必须大于0且小于120）
+  \item 属性间的相互约束（例如入职日期必须晚于出生日期）
+\end{itemize}
+
+\subsection{关系代数}
+
+关系代数是一种抽象的查询语言，它用对关系的运算来表达查询。
+
+\subsubsection{传统的集合运算}
+
+\begin{enumerate}
+  \item \textcolor{blue}{并（Union）}：$R \cup S = \{t | t \in R \vee t \in S\}$
+
+  \item \textcolor{blue}{差（Difference）}：$R - S = \{t | t \in R \wedge t \notin S\}$
+
+  \item \textcolor{blue}{交（Intersection）}：$R \cap S = \{t | t \in R \wedge t \in S\}$
+
+  \item \textcolor{blue}{笛卡尔积（Cartesian Product）}：$R \times S = \{(r, s) | r \in R \wedge s \in S\}$
+\end{enumerate}
+
+需要注意的是，进行并、差、交运算的两个关系必须是\textcolor{red}{同元（union-compatible）}的，即它们必须具有相同的目（属性数）且对应的属性来自相同的域。
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 第一个集合
+    \draw (0,0) circle (1);
+    \node at (-0.5, 0) {$R$};
+
+    % 第二个集合
+    \draw (1.5,0) circle (1);
+    \node at (2, 0) {$S$};
+
+    % 标记区域
+    \node at (0.75, -1.5) {$R \cup S$: 两个圆的全部区域};
+    \node at (0.75, -2) {$R \cap S$: 两个圆的交叉区域};
+    \node at (0.75, -2.5) {$R - S$: 仅在$R$中的区域};
+  \end{tikzpicture}
+  \caption{集合运算示意图}
+\end{figure}
+
+\subsubsection{专门的关系运算}
+
+\begin{enumerate}
+  \item \textcolor{blue}{选择（Selection）}：$\sigma_F(R) = \{t | t \in R \wedge F(t) = \textrm{true}\}$
+
+    选择操作是从关系R中选取满足给定条件F的元组。
+
+  \item \textcolor{blue}{投影（Projection）}：$\Pi_A(R) = \{t[A] | t \in R\}$
+
+    投影操作是从关系R中选取指定的属性A组成新的关系。
+
+  \item \textcolor{blue}{连接（Join）}：
+    \begin{itemize}
+      \item 自然连接（Natural Join）：$R \bowtie S = \{rs | r \in R \wedge s \in S \wedge r[A] = s[A]\}$，其中A是R和S共有的属性集合。
+      \item $\theta$-连接（Theta Join）：$R \bowtie_\theta S = \{rs | r \in R \wedge s \in S \wedge \theta(r, s)\}$
+      \item 外连接（Outer Join）：保留在连接中无匹配的元组，缺少的属性值用NULL填充。
+    \end{itemize}
+
+  \item \textcolor{blue}{除法（Division）}：$R \div S = \{t[X] | t \in R \wedge \forall s \in S, ts \in R\}$
+
+    除法操作用于回答"对于S中的所有值，找出R中与之相关的所有值"类型的查询。
+\end{enumerate}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % 关系R
+    \node[draw, rectangle, minimum width=3cm, minimum height=2cm] (R) at (0,0) {\shortstack{关系R\\(A, B, C)}};
+
+    % 关系S
+    \node[draw, rectangle, minimum width=3cm, minimum height=2cm] (S) at (5,0) {\shortstack{关系S\\(C, D, E)}};
+
+    % 连接操作
+    \node[draw, rectangle, minimum width=3cm, minimum height=2cm] (join) at (2.5,-3) {\shortstack{R $\bowtie$ S\\(A, B, C, D, E)}};
+
+    % 箭头
+    \draw[->] (R) -- (join);
+    \draw[->] (S) -- (join);
+
+    % 注释
+    \node at (2.5,-4.5) {自然连接：基于共同属性C};
+  \end{tikzpicture}
+  \caption{自然连接示例}
+\end{figure}
+
+\begin{example}
+  考虑以下两个关系：
+
+  学生关系Student(Sno, Sname, Sage, Sdept)\\
+  选课关系SC(Sno, Cno, Grade)
+
+  以下关系代数表达式表示"查询所有选修了'C1'课程的学生姓名":
+
+  $\Pi_\text{Sname}(\sigma_\text{Cno='C1'}(\text{Student} \bowtie \text{SC}))$
+
+  执行过程：
+  \begin{enumerate}
+    \item 首先，Student和SC进行自然连接（按Sno属性）
+    \item 然后，选择Cno='C1'的元组
+    \item 最后，投影出Sname属性
+  \end{enumerate}
+\end{example}
+
+\subsection{扩展的关系代数操作}
+
+除了基本的关系代数操作外，还有一些扩展操作：
+
+\begin{enumerate}
+  \item \textcolor{blue}{广义投影（Generalized Projection）}：允许在投影列表中包含计算表达式
+  \item \textcolor{blue}{聚集（Aggregation）}：包括COUNT、SUM、AVG、MAX、MIN等聚合函数
+  \item \textcolor{blue}{外连接（Outer Join）}：保留在连接中无匹配的元组
+  \item \textcolor{blue}{半连接（Semi-join）}：$R \ltimes S = \Pi_R(R \bowtie S)$
+\end{enumerate}
+
+\subsection{小结}
+
+\begin{itemize}
+  \item 关系模型以简单的二维表格形式表示数据，具有形式化的数学基础
+  \item 关系的基本特性包括列的同质性、行列无序性、元组的唯一性等
+  \item 关系完整性约束包括实体完整性、参照完整性和用户定义的完整性
+  \item 关系代数提供了一套形式化的操作，分为传统的集合运算和专门的关系运算
+  \item 关系代数是关系数据库查询语言的理论基础，SQL语言实现了关系代数的大部分功能
+\end{itemize}
+
+\end{document}
