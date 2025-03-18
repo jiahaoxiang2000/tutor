@@ -40,7 +40,7 @@
     关系模型的数据结构及形式化定义，关系操作，关系完整性，关系代数（传统的集合运算、专门的关系运算）。
 
   \item \textbf{关系数据库标准语言SQL}\\
-    数据定义、数据查询、数据更新、空值处理、视图。ss
+    数据定义、数据查询、数据更新、空值处理、视图。
 
   \item \textbf{数据库安全性}\\
     数据库安全性概述，数据库安全性控制。
@@ -505,5 +505,434 @@ ANSI/SPARC提出的三级模式结构包括：
   \item 关系代数提供了一套形式化的操作，分为传统的集合运算和专门的关系运算
   \item 关系代数是关系数据库查询语言的理论基础，SQL语言实现了关系代数的大部分功能
 \end{itemize}
+
+\section{关系数据库标准语言SQL}
+
+\subsection{简介}
+\textcolor{red}{SQL (Structured Query Language)} 是关系数据库的标准语言，由IBM研究所开发，最初称为SEQUEL (Structured English Query Language)。SQL已成为关系数据库领域的国际标准语言，几乎所有主流数据库管理系统都支持SQL。
+
+SQL语言具有以下特点：
+\begin{itemize}
+    \item 综合统一：集数据定义、数据查询、数据操纵和数据控制功能于一体
+    \item 高度非过程化：用户只需指定"做什么"，而非"怎么做"
+    \item 面向集合操作：操作对象和结果都是集合
+    \item 以同一种语法结构提供多种使用方式
+    \item 语言简洁，易学易用
+\end{itemize}
+
+\subsection{数据定义 (DDL)}
+数据定义语言(Data Definition Language)用于定义数据库结构，包括创建、修改和删除数据库对象。
+
+\subsubsection{创建表}
+\begin{lstlisting}[language=SQL, caption=创建表的基本语法, label=sql:create-table]
+CREATE TABLE 表名 (
+    列名1 数据类型1 [列级约束条件],
+    列名2 数据类型2 [列级约束条件],
+    ...
+    [,表级约束条件]
+);
+\end{lstlisting}
+
+\textcolor{blue}{示例：创建学生表}
+\begin{lstlisting}[language=SQL]
+CREATE TABLE Student (
+    Sno CHAR(9) PRIMARY KEY,
+    Sname VARCHAR(20) NOT NULL,
+    Ssex CHAR(2),
+    Sage SMALLINT,
+    Sdept VARCHAR(20)
+);
+\end{lstlisting}
+
+\subsubsection{修改表}
+\begin{lstlisting}[language=SQL]
+-- 添加列
+ALTER TABLE 表名 ADD 列名 数据类型 [约束];
+
+-- 修改列定义
+ALTER TABLE 表名 MODIFY 列名 数据类型 [约束];
+
+-- 删除列
+ALTER TABLE 表名 DROP COLUMN 列名;
+\end{lstlisting}
+
+\subsubsection{删除表}
+\begin{lstlisting}[language=SQL]
+DROP TABLE 表名;
+\end{lstlisting}
+
+\subsection{数据查询 (DQL)}
+数据查询语言(Data Query Language)是SQL的核心功能，用于从数据库中检索数据。
+
+\subsubsection{基本查询结构}
+\begin{lstlisting}[language=SQL]
+SELECT [DISTINCT] <目标列表达式> [别名]
+FROM <表名或视图名> [别名]
+[WHERE <条件表达式>]
+[GROUP BY <列名1> [HAVING <条件表达式>]]
+[ORDER BY <列名2> [ASC|DESC]];
+\end{lstlisting}
+
+\subsubsection{单表查询}
+\textcolor{blue}{示例：查询所有学生的学号和姓名}
+\begin{lstlisting}[language=SQL]
+SELECT Sno, Sname
+FROM Student;
+\end{lstlisting}
+
+\subsubsection{多表连接查询}
+\textcolor{blue}{示例：查询学生及其选修课程成绩}
+\begin{lstlisting}[language=SQL]
+SELECT Student.Sno, Sname, Cname, Grade
+FROM Student, Course, SC
+WHERE Student.Sno = SC.Sno
+  AND SC.Cno = Course.Cno;
+\end{lstlisting}
+
+\subsubsection{嵌套查询}
+\begin{lstlisting}[language=SQL]
+SELECT Sname
+FROM Student
+WHERE Sno IN (
+    SELECT Sno
+    FROM SC
+    WHERE Cno = 'C001'
+);
+\end{lstlisting}
+
+\subsubsection{集合查询}
+\begin{lstlisting}[language=SQL]
+-- 并操作
+SELECT Sno FROM Student WHERE Sdept = 'CS'
+UNION
+SELECT Sno FROM SC WHERE Grade > 90;
+
+-- 交操作
+SELECT Sno FROM Student WHERE Sdept = 'CS'
+INTERSECT
+SELECT Sno FROM SC WHERE Grade > 90;
+
+-- 差操作
+SELECT Sno FROM Student WHERE Sdept = 'CS'
+EXCEPT
+SELECT Sno FROM SC WHERE Grade > 90;
+\end{lstlisting}
+
+\subsection{数据更新 (DML)}
+数据操纵语言(Data Manipulation Language)用于添加、修改和删除数据库中的数据。
+
+\subsubsection{数据插入}
+\begin{lstlisting}[language=SQL]
+-- 插入单条数据
+INSERT INTO 表名 [(列名1, 列名2, ...)]
+VALUES (值1, 值2, ...);
+
+-- 插入查询结果
+INSERT INTO 表名 [(列名1, 列名2, ...)]
+SELECT 列1, 列2, ... FROM 表名 WHERE 条件;
+\end{lstlisting}
+
+\subsubsection{数据修改}
+\begin{lstlisting}[language=SQL]
+UPDATE 表名
+SET 列名1 = 表达式1, 列名2 = 表达式2, ...
+[WHERE 条件];
+\end{lstlisting}
+
+\subsubsection{数据删除}
+\begin{lstlisting}[language=SQL]
+DELETE FROM 表名
+[WHERE 条件];
+\end{lstlisting}
+
+\subsection{空值处理}
+\colorbox{yellow}{空值(NULL)表示"不知道"或"不存在"或"无意义"的值}，需要特殊处理。
+
+\subsubsection{空值判断}
+\begin{lstlisting}[language=SQL]
+-- 判断是否为空
+SELECT Sname
+FROM Student
+WHERE Sage IS NULL;
+
+-- 判断是否非空
+SELECT Sname
+FROM Student
+WHERE Sage IS NOT NULL;
+\end{lstlisting}
+
+\subsubsection{空值函数}
+许多数据库系统提供处理空值的特殊函数：
+\begin{itemize}
+    \item \texttt{COALESCE(expr1, expr2, ...)}：返回第一个非空表达式的值
+    \item \texttt{NULLIF(expr1, expr2)}：如果expr1=expr2则返回NULL，否则返回expr1
+    \item \texttt{ISNULL(expr, replacement)}：如果expr为NULL则返回replacement，否则返回expr
+\end{itemize}
+
+\begin{lstlisting}[language=SQL]
+-- 示例：如果年龄为NULL则显示为'未知'
+SELECT Sname, COALESCE(CAST(Sage AS VARCHAR), '未知') AS Age
+FROM Student;
+\end{lstlisting}
+
+\subsection{视图}
+\textcolor{red}{视图(View)是从一个或几个基本表（或视图）导出的表}，是一种虚拟表。
+
+\subsubsection{创建视图}
+\begin{lstlisting}[language=SQL]
+CREATE VIEW 视图名 [(列名1, 列名2, ...)]
+AS 查询语句
+[WITH CHECK OPTION];
+\end{lstlisting}
+
+\textcolor{blue}{示例：创建计算机系学生的视图}
+\begin{lstlisting}[language=SQL]
+CREATE VIEW CS_Student
+AS SELECT Sno, Sname, Sage
+FROM Student
+WHERE Sdept = 'CS';
+\end{lstlisting}
+
+\subsubsection{查询视图}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM CS_Student;
+\end{lstlisting}
+
+\subsubsection{修改视图}
+\begin{lstlisting}[language=SQL]
+ALTER VIEW 视图名
+AS 新查询语句;
+\end{lstlisting}
+
+\subsubsection{删除视图}
+\begin{lstlisting}[language=SQL]
+DROP VIEW 视图名;
+\end{lstlisting}
+
+\subsubsection{视图更新的限制}
+并非所有视图都是可更新的。一般而言，包含以下内容的视图不可更新：
+\begin{itemize}
+    \item 包含GROUP BY子句或聚合函数的视图
+    \item 包含DISTINCT关键字的视图
+    \item 包含操作符如UNION, INTERSECT, EXCEPT的视图
+    \item 包含子查询中引用FROM子句的同一个表的视图
+\end{itemize}
+
+
+\section{数据库安全性}
+
+\subsection{数据库安全性概述}
+
+\subsubsection{安全性的概念与重要性}
+\textcolor{red}{数据库安全性(Database Security)}是指保护数据库以防止未授权的访问、恶意攻击或意外泄露，同时确保数据的完整性、可用性和保密性。在信息时代，数据库安全已成为组织信息系统安全的核心部分。
+
+数据库安全性涉及多个层面：
+\begin{itemize}
+    \item \textbf{物理安全}：保护数据库服务器和存储介质
+    \item \textbf{系统安全}：操作系统和网络层面的安全措施
+    \item \textbf{DBMS安全机制}：数据库管理系统提供的安全功能
+    \item \textbf{数据安全}：保护存储在数据库中的具体数据
+\end{itemize}
+
+\subsubsection{安全威胁类型}
+数据库面临的主要安全威胁包括：
+
+\begin{enumerate}
+    \item \textcolor{blue}{机密性威胁}：未授权用户获取敏感数据
+    \item \textcolor{blue}{完整性威胁}：数据被非法修改
+    \item \textcolor{blue}{可用性威胁}：合法用户无法访问所需数据
+    \item \textcolor{blue}{责任认定威胁}：无法追踪用户操作
+\end{enumerate}
+
+\colorbox{yellow}{安全漏洞可能来自内部威胁（如员工）或外部威胁（如黑客），且内部威胁通常更为严重}。
+
+\subsubsection{数据库安全需求}
+一个安全的数据库系统应满足以下需求：
+
+\begin{itemize}
+    \item \textbf{身份认证}：确认用户身份
+    \item \textbf{访问控制}：限制用户只能访问授权资源
+    \item \textbf{审计跟踪}：记录用户活动以供事后检查
+    \item \textbf{加密保护}：防止数据被窃取时泄露信息
+    \item \textbf{完整性控制}：确保数据不被非法修改
+    \item \textbf{可用性保障}：确保系统正常运行并防止拒绝服务攻击
+\end{itemize}
+
+\subsection{数据库安全性控制}
+
+\subsubsection{身份认证}
+\textcolor{red}{身份认证(Authentication)}是数据库安全的第一道防线，用于验证用户身份。
+
+\textbf{常见的认证机制包括：}
+\begin{itemize}
+    \item 基于密码的认证（最常见）
+    \item 多因素认证（结合密码、生物识别、令牌等）
+    \item 基于证书的认证
+    \item 集成的认证（如LDAP、Active Directory）
+\end{itemize}
+
+\textbf{在SQL中实现用户认证：}
+\begin{lstlisting}[language=SQL, caption=创建用户并设置密码]
+-- MySQL中创建用户
+CREATE USER 'username'@'hostname' IDENTIFIED BY 'password';
+
+-- Oracle中创建用户
+CREATE USER username IDENTIFIED BY password;
+
+-- SQL Server中创建用户
+CREATE LOGIN username WITH PASSWORD = 'password';
+CREATE USER username FOR LOGIN username;
+\end{lstlisting}
+
+\subsubsection{访问控制机制}
+
+\textcolor{red}{访问控制(Access Control)}用于确保用户只能执行被授权的操作。DBMS通常实现以下访问控制模型：
+
+\paragraph{自主访问控制(DAC)}
+自主访问控制允许数据对象的所有者决定谁可以访问对象以及允许的操作。在关系数据库中主要通过授权机制实现。
+
+\begin{lstlisting}[language=SQL, caption=SQL中的权限授予与回收]
+-- 授予权限
+GRANT privilege_list
+ON object
+TO user_list
+[WITH GRANT OPTION];
+
+-- 回收权限
+REVOKE privilege_list
+ON object
+FROM user_list
+[CASCADE | RESTRICT];
+\end{lstlisting}
+
+\textcolor{blue}{示例：授予查询权限}
+\begin{lstlisting}[language=SQL]
+-- 授予用户查询学生表权限
+GRANT SELECT ON Student TO user1;
+
+-- 授予包含授权权的权限
+GRANT SELECT, UPDATE(Sage, Sdept) ON Student
+TO user2 WITH GRANT OPTION;
+
+-- 回收权限
+REVOKE SELECT ON Student FROM user1;
+\end{lstlisting}
+
+\paragraph{强制访问控制(MAC)}
+强制访问控制基于安全标签，不由用户决定，而是由系统强制执行。每个数据对象被分配一个安全级别，每个用户被授予一个安全许可，只有当用户的安全许可满足对象的安全级别要求时才允许访问。
+
+\paragraph{基于角色的访问控制(RBAC)}
+RBAC通过定义角色并将权限分配给角色，再将用户分配到角色，从而简化权限管理。
+
+\begin{lstlisting}[language=SQL, caption=使用角色进行权限管理]
+-- 创建角色
+CREATE ROLE student_admin;
+
+-- 给角色授权
+GRANT SELECT, INSERT, UPDATE ON Student TO student_admin;
+
+-- 将用户分配到角色
+GRANT student_admin TO user1, user2;
+\end{lstlisting}
+
+\subsubsection{视图机制与安全}
+视图是实现数据库安全性的重要方法，可以：
+\begin{itemize}
+    \item 隐藏表中的某些列
+    \item 隐藏表中的某些行
+    \item 将多个表的信息组合在一起，但仅显示授权部分
+\end{itemize}
+
+\begin{lstlisting}[language=SQL, caption=使用视图限制数据访问]
+-- 创建只包含非敏感信息的视图
+CREATE VIEW PublicStudentInfo AS
+SELECT Sno, Sname, Sdept
+FROM Student;
+
+-- 将视图权限授予用户
+GRANT SELECT ON PublicStudentInfo TO public_users;
+\end{lstlisting}
+
+\subsubsection{审计}
+\textcolor{red}{审计(Auditing)}是监控并记录用户对数据库的访问和操作，帮助检测安全违规并提供责任追踪。
+
+\begin{lstlisting}[language=SQL, caption=启用数据库审计]
+-- Oracle启用审计
+AUDIT SELECT, UPDATE, DELETE ON Student;
+
+-- SQL Server设置审计
+CREATE SERVER AUDIT StudentDataAudit
+TO FILE (FILEPATH = 'C:\auditlog');
+
+CREATE DATABASE AUDIT SPECIFICATION StudentTableAudit
+FOR SERVER AUDIT StudentDataAudit
+ADD (SELECT, UPDATE, DELETE ON Student BY public);
+\end{lstlisting}
+
+审计信息通常包含：
+\begin{itemize}
+    \item 操作用户
+    \item 操作类型
+    \item 操作时间
+    \item 操作对象
+    \item 操作结果
+    \item 可能的前后值
+\end{itemize}
+
+\subsubsection{数据加密}
+\textcolor{red}{加密(Encryption)}是将数据转换为只有授权方能理解的形式，保护数据即使在被窃取的情况下也不被理解。
+
+数据库加密有几个层次：
+\begin{enumerate}
+    \item \textbf{连接加密}：客户端与服务器之间的通信加密（如SSL/TLS）
+    \item \textbf{透明数据加密(TDE)}：整个数据库文件加密
+    \item \textbf{列级加密}：只加密敏感列
+    \item \textbf{应用层加密}：在应用程序中对数据进行加密/解密
+\end{enumerate}
+
+\begin{lstlisting}[language=SQL, caption=SQL Server中的列加密示例]
+-- 创建主密钥
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'StrongPassword123!';
+
+-- 创建证书
+CREATE CERTIFICATE StudentCert WITH SUBJECT = 'Student Data Protection';
+
+-- 创建对称密钥
+CREATE SYMMETRIC KEY StudentKey
+WITH ALGORITHM = AES_256
+ENCRYPTION BY CERTIFICATE StudentCert;
+
+-- 加密数据
+OPEN SYMMETRIC KEY StudentKey DECRYPTION BY CERTIFICATE StudentCert;
+
+UPDATE Student
+SET SSN = EncryptByKey(Key_GUID('StudentKey'), SSN);
+
+CLOSE SYMMETRIC KEY StudentKey;
+\end{lstlisting}
+
+\subsubsection{推断控制}
+\textcolor{red}{推断控制(Inference Control)}用于防止用户通过合法查询推断出敏感信息。推断威胁常见于统计数据库和数据仓库。
+
+常见的推断控制方法包括：
+\begin{itemize}
+    \item 限制查询集大小（防止针对特定个体的查询）
+    \item 添加随机噪声（在结果中添加细微的随机变化）
+    \item 数据扰动（修改原始数据，但保持统计特性）
+    \item 限制查询重叠（防止通过多个查询交叉获取信息）
+\end{itemize}
+
+\subsubsection{数据库安全的综合防御策略}
+有效的数据库安全需要多层次防御策略：
+\begin{enumerate}
+    \item \textbf{定期安全评估}：识别和修补安全漏洞
+    \item \textbf{最小权限原则}：只授予必要的权限
+    \item \textbf{安全更新和补丁}：保持DBMS为最新版本
+    \item \textbf{数据备份与恢复}：建立定期备份和恢复程序
+    \item \textbf{安全配置}：禁用不必要的功能和默认账户
+    \item \textbf{安全培训}：培训管理员和用户安全意识
+\end{enumerate}
+
+\colorbox{yellow}{数据库安全是一个持续过程，需要定期评估和更新安全措施以应对新的威胁和漏洞。}
 
 \end{document}
