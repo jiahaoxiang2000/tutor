@@ -52,3 +52,8 @@ con.execute("INSERT INTO scores VALUES (3,4,50)")
 result = con.sql("SELECT stuName,courseName,score FROM student,course,scores WHERE student.stuId = scores.stuId AND course.courseId = scores.courseId")
 # show the result
 result.show()
+# %% question
+#  每场比赛进球数( 队员编号,比赛场次,进球数,球队名,队长名 ),如果规定每个队员只能属于一个球队,每个球队只有一个队长
+# FD：（（比赛场次，队员编号）-》进球数，队员编号-〉球队名，球队名—》队长名）
+# （比赛场次,进球数）（队员编号,球队名,队长名）
+#  （比赛场次，队员编号）——〉（进球数,球队名,队长名）
