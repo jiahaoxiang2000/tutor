@@ -1,11 +1,10 @@
-
 ## ⚡️ Q1 已知二叉树的遍历序列如下，先画出这两棵二叉树，然后分别写出它们的先序序列和后序序列。
 
 (1)先序序列：A BCDEF GH
-  中序序列：CBEDFAGH
-  请写出该二叉树的后序遍历序列。
+中序序列：CBEDFAGH
+请写出该二叉树的后序遍历序列。
 
-  CEFDBHGA
+CEFDBHGA
 
 (2) 后序序列为DCEGBFHKJIA，
 中序序列为DCBGEAHFIJK
@@ -29,7 +28,9 @@ int binarySearch (int arr [], int n, int key) {
 
 }
 ```
+
 ## Q7 查询计算机系（CS）年龄在 20 岁以下的学生的学号和姓名
+
 假设有以下关系模式：
 学生 : Student(Sno, Sname, Ssex, Sage, Sdept)
 课程 : Course(Cno, Cname, Cpno, Ccredit)
@@ -38,3 +39,8 @@ int binarySearch (int arr [], int n, int key) {
 ```sql
 SELECT Sno, Sname FROM Student WHERE Sdept = 'CS' AND Sage < 20
 ```
+
+## 考试时间
+
+- 120 fz 200 score
+- 120/200 \* 2 = 1.2 fz
