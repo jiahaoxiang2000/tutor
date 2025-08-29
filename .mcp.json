@@ -2,7 +2,7 @@
   "mcpServers": {
     "all-in-mcp": {
       "type": "stdio",
-      "command": "pipx",
+      "command": "uv",
       "args": ["run", "all-in-mcp"],
       "env": {
         "APAPER": "true",
