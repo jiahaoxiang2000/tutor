@@ -448,667 +448,810 @@ Alice如何确认消息真的来自Bob？Bob如何确认消息真的来自Alice�
   })
 ]
 
+== 轻量级密码的标准化工作 - 早期发展
 
-// == 轻量级密码特点
+#align(left)[
+  #bluet[1994年] Neecham等人提出描述简洁、实现简单的
+  #redt[Tiny Encryption Algorithm (TEA)]
 
-// === 02 轻量级密码（LWC）具有的特点
+  #pause
 
-// #align(center)[
-//   #cetz-canvas({
-//     import cetz.draw: *
+  #bluet[2004年] 欧洲国家成立ECRYPT/eSTREAM项目：
+  80bits密钥在受限硬件资源中的应用
 
-//     circle((0, 0), radius: 1.5, name: "center")
-//     content("center", [#text(size: 14pt, fill: blue)[LWC的特点]])
+  #pause
 
-//     let features = (
-//       "低计算量",
-//       "低能耗",
-//       "低处理",
-//       "低存储容量",
-//       "低内存占用",
-//     )
+  #bluet[2012年] IEC发布29192《轻量级密码》标准系列
 
-//     for (i, feature) in features.enumerate() {
-//       let angle = i * 72deg - 90deg
-//       let pos = (2.8 * calc.cos(angle), 2.8 * calc.sin(angle))
-//       content(pos, [#text(size: 12pt, fill: red)[#feature]], anchor: "center")
-//       line((1.3 * calc.cos(angle), 1.3 * calc.sin(angle)), pos, stroke: blue)
-//     }
-//   })
-// ]
+  #pause
 
-// #pause
+  #bluet[2012年] IEC发布29167标准系列，至今仍在扩展
 
-// #align(center)[
-//   #text(size: 16pt, fill: gray)[以及更多特征...]
-// ]
+  #pause
 
+  #bluet[2013年] NIST启动轻量级密码研究项目
+]
 
-// == 标准化历程(1)
+== 轻量级密码的标准化工作 - 近期发展
 
-// === 03 轻量级密码的标准化工作 - 早期发展
+#align(left)[
+  #bluet[2017年] NIST发布轻量级密码调查联合报告NISTIR 8114
 
-// #align(left)[
-//   #bluet[1994年] Neecham等人提出描述简洁、实现简单的
-//   #redt[Tiny Encryption Algorithm (TEA)]
+  #pause
 
-//   #pause
+  #bluet[2018年] NIST发布轻量级密码算法征集需求和评估标准通知
 
-//   #bluet[2004年] 欧洲国家成立ECRYPT/eSTREAM项目：
-//   80bits密钥在受限硬件资源中的应用
+  #pause
 
-//   #pause
+  #bluet[2019年4月] NIST公布了前两轮候选算法筛选结果
 
-//   #bluet[2012年] IEC发布29192《轻量级密码》标准系列
+  #pause
 
-//   #pause
+  #bluet[2021年3月] NIST宣布进入最终轮的10个轻量级密码算法
 
-//   #bluet[2012年] IEC发布29167标准系列，至今仍在扩展
+  #pause
 
-//   #pause
+  #bluet[2025年8月] NIST正式发布轻量级密码算法标准，
+  选定#redt[Ascon算法族]作为#redt[NIST轻量级密码算法标准]。
+]
 
-//   #bluet[2013年] NIST启动轻量级密码研究项目
+== 设计规范与标准
 
-//   #pause
+根据这些轻量级分组密码算法的设计规范与标准，
+轻量级分组密码在设计上应考虑以下7点：
 
-//   #bluet[2013年] 日本CRYPTREC启动轻量级密码研究项目
-// ]
+#grid(
+  columns: 2,
+  gutter: 20pt,
+  [
+    1. #redt[安全强度]
 
+    2. #redt[灵活性]
 
-// == 标准化历程(2)
+    3. #redt[多重功能下的低开销]
 
-// === 03 轻量级密码的标准化工作 - 近期发展
+    4. #redt[密文扩展]
+  ],
+  [
+    5. #redt[侧信道]
 
-// #align(left)[
-//   #bluet[2017年] NIST发布轻量级密码调查联合报告NISTIR 8114
+    6. #redt[明文-密文对的数量限制]
 
-//   #pause
+    7. #redt[相关密钥攻击以及其他一些基本的攻击方法]
+  ],
+)
 
-//   #bluet[2018年] NIST发布轻量级密码算法征集需求和评估标准通知
+= 密码研究热点
 
-//   #pause
+== 四类研究方法概述
 
-//   #bluet[2019年4月] NIST公布了前两轮候选算法筛选结果
+当前轻量级密码学研究主要围绕以下四个热点方向展开：
 
-//   #pause
+#grid(
+  columns: 2,
+  gutter: 20pt,
+  [
+    1. #bluet[优化实现]
 
-//   #bluet[2021年3月] NIST宣布进入最终轮的10个轻量级密码算法
+    #align(center)[
+      #text(fill: red)[
+        对已有的轻量级密码算法进行硬件优化实现
+      ]
+    ]
 
-//   #pause
+    2. #bluet[结构改进方法]
 
-//   下一步，将对最终轮算法进行为期约12个月的标准化工作，
-//   最终形成#redt[NIST轻量级密码算法标准]。
-// ]
-
-// #pause
-
-// #align(center)[
-//   #text(size: 12pt, fill: gray)[图3 轻量级密码研究发展时间简表]
-// ]
-
-
-// == 设计考虑要素
-
-// === 设计规范与标准
-
-// 根据这些轻量级分组密码算法的设计规范与标准，
-// 轻量级分组密码在设计上应考虑以下7点：
-
-// #pause
-
-// #grid(
-//   columns: 2,
-//   gutter: 20pt,
-//   [
-//     1. #redt[安全强度]
-
-//     2. #redt[灵活性]
-
-//     3. #redt[多重功能下的低开销]
-
-//     4. #redt[密文扩展]
-//   ],
-//   [
-//     5. #redt[侧信道]
-
-//     6. #redt[明文-密文对的数量限制]
-
-//     7. #redt[相关密钥攻击以及其他一些基本的攻击方法]
-//   ],
-// )
-
-
-// = 密码研究热点
-
-// == 三类研究方法概述
-
-// 01 轻量级密码构造的三类主要研究方法
-
-// #align(center)[
-//   #v(2em)
-//   #text(size: 18pt, fill: blue)[
-//     三类主要研究方法
-//   ]
-//   #v(2em)
-// ]
-
-
-// === 硬件优化实现(1)
-
-// #align(center)[
-//   #text(size: 18pt, fill: red)[
-//     1. 对已有的轻量级密码分组密码算法进行硬件优化实现
-//   ]
-// ]
-
-// #pause
-
-// #v(1em)
-
-// #bluet[以《Implementation of PRINCE with resource-efficient structures based on FPGAs》为例]
-
-// #pause
-
-// 针对PRINCE算法提出了#redt[3种新的硬件架构实现]。
-
-
-// === 硬件优化实现(2)
-
-
-// #align(center)[
-//   #text(size: 18pt, fill: red)[
-//     1. 对已有的轻量级密码分组密码算法进行硬件优化实现
-//   ]
-// ]
-
-// #pause
-
-// #v(2em)
-
-// #align(center)[
-//   实验量少，关键在论文的书写。
-
-//   #v(1em)
-
-//   只需进行#bluet[不同的硬件优化架构实现]，比较#bluet[硬件参数]。
-// ]
-
-
-// === 结构改进方法(1)
-
-
-// #align(center)[
-//   #text(size: 18pt, fill: red)[
-//     2. 基于分组密码，对密码算法的结构或部件进行改进
-//   ]
-// ]
-
-// #pause
-
-// #grid(
-//   columns: 2,
-//   gutter: 20pt,
-//   [
-//     #align(center)[
-//       #bluet[Feistel结构]
-
-//       #v(0.5em)
-
-//       #raw(
-//         "
-//         Plaintext
-//            |
-//           IP
-//            |
-//         L1   R1
-//          |   |
-//          F   |
-//         /|   |
-//        k1    |
-//         |    |
-//         L2   R2
-//         ...
-//         ",
-//       )
-//     ]
-//   ],
-//   [
-//     #align(center)[
-//       #bluet[SPN结构]
-
-//       #v(0.5em)
-
-//       #raw(
-//         "
-//         Plaintext
-//            |
-//        Substitution
-//            |
-//        Permutation
-//            |
-//        Substitution
-//            |
-//        Permutation
-//            |
-//        Ciphertext
-//         ",
-//       )
-//     ]
-//   ],
-// )
-
-// #pause
-
-// #align(center)[
-//   #bluet[PX结构]
-// ]
-
-
-// === 结构改进方法(2)
-
-// #align(center)[
-//   #text(size: 18pt, fill: red)[
-//     2. 基于分组密码，对密码算法的结构或部件进行改进
-//   ]
-// ]
-
-// #v(2em)
-
-// #grid(
-//   columns: 2,
-//   gutter: 40pt,
-//   [
-//     #align(center)[
-//       #text(size: 16pt, fill: blue)[QTL结构]
-//     ]
-//   ],
-//   [
-//     #align(center)[
-//       #text(size: 16pt, fill: blue)[ARX结构]
-//     ]
-//   ],
-// )
-
-
-// === 应用场景设计
-
-
-// #align(center)[
-//   #text(size: 18pt, fill: red)[
-//     3. 针对特定应用场景或者需求进行设计的轻量级分组密码算法
-//   ]
-// ]
-
-// #pause
-
-// #v(1em)
-
-// 典型算法示例：
-
-// #pause
-
-// - #bluet[(1)] 面向软硬件灵活实现的LBlock算法
-// - #bluet[(2)] 专注低能耗指标设计的Midori算法
-// - #bluet[(3)] 基于低延迟理念设计的PRINCE算法
-// - #bluet[(4)] 面向IC打印的PRINTcipher算法
-
-// ==== 3. 针对特定应用场景设计 - LBlock算法
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     (1) 面向软硬件灵活实现的LBlock算法
-//   ]
-// ]
-
-// #pause
-
-// #grid(
-//   columns: 2,
-//   gutter: 20pt,
-//   [
-//     #align(center)[
-//       #text(size: 12pt)[LBlock算法加密流程图]
-
-//       #raw(
-//         "
-//         X0     X1
-//         |      |
-//         |   <<<8
-//         |      |
-//         F      |
-//         |      |
-//         X32   X33
-//         ",
-//       )
-//     ]
-//   ],
-//   [
-//     LBlock采用了#bluet[4位逐字排列]，使得算法不仅可以在硬件中廉价实现，而且可以在软件环境中廉价实现。
-
-//     #pause
-
-//     #text(size: 12pt)[
-//       - 硬件：需要1320GE，吞吐量200Kbps
-//       - 软件：8位微控制器，加密64位数据需要3955个时钟周期
-//       - 算法每一轮只使用一半数据，另一半使用简单移位
-//       - 密钥调度以流密码方式设计
-//     ]
-//   ],
-// )
-
-// ==== 3. 针对特定应用场景设计 - Midori算法
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     (2) 专注低能耗指标设计的Midori算法
-//   ]
-// ]
-
-// #pause
-
-// #grid(
-//   columns: 2,
-//   gutter: 20pt,
-//   [
-//     #text(size: 12pt)[
-//       (1) 列混淆使用4×4几乎MDS二进制矩阵，在面积和信号延迟方面比4×4 MDS矩阵更有效。
-
-//       #pause
-
-//       (2) 使用了一个轻量级、小延迟的4位S-box。该S盒中的信号延迟分别是PRINCE和PRESENT的1.5倍和2倍。
-
-//       #pause
-
-//       (3) 低轮数。
-
-//       #pause
-
-//       (4) Midori算法的加密和解密功能相互转换时，只需要通过在电路中的小调整就可以达到加解密一致。
-//     ]
-//   ],
-//   [
-//     #align(center)[
-//       #text(size: 12pt)[Midori算法加密流程图]
-
-//       #raw(
-//         "
-//         KA(WK)
-//            |
-//           SB
-//            |
-//           SC
-//            |
-//           MC
-//            |
-//         KA(RKi)
-//            |
-//           SB
-//            |
-//         KA(WK)
-
-//         15轮
-//         ",
-//       )
-//     ]
-//   ],
-// )
-
-// ==== 3. 针对特定应用场景设计 - PRINCE算法
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     (3) 基于低延迟理念设计的PRINCE算法
-//   ]
-// ]
-
-// #pause
-
-// #align(center)[
-//   #text(size: 12pt)[PRINCE算法加密流程图]
-// ]
-
-// #pause
-
-// PRINCE算法低延迟主要的方式是#bluet[轮数尽可能地少]，轮函数中的部件尽量采用#bluet[低延迟]。
-
-// #pause
-
-// 因此，PRINCE的轮数只有#redt[12轮]，还采用了一个#bluet[几乎MDS矩阵]，这样有助于为各种类型攻击提供更好边界，进而可以允许减少轮数，从而减少延迟。
-
-// #pause
-
-// 除此之外，PRINCE的加密结构也很新颖，具有#redt[对合性]。
-
-
-// ==== 3. 针对特定应用场景设计 - PRINTcipher算法
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     (4) 面向IC打印的PRINTcipher算法
-//   ]
-// ]
-
-// #pause
-
-// 由于IC打印中使用到的#bluet[电子产品代码（EPC）]的长度为96位，因此PRINTcipher使用的明文长度为#redt[48bit和96bit]两个版本，密钥长度为#redt[160bit]，两个版本分别对应的轮数为#redt[48，96轮]。
-
-// #pause
-
-// 常规的IC为了节省开销，一般要求IC中的使用密钥不进行更改，因此，PRINTcipher算法的#bluet[没有密钥扩展部分]，设计者通过使用一种排列方法，使得算法可以根据不同的密钥具有不同的加密流程。
-
-// #pause
-
-// #align(center)[
-//   #text(size: 12pt)[PRINTcipher的S盒部分的排列方法]
-// ]
-
-
-// == S盒构造方法(1)
-
-// === 02 侧重低延迟或侧重轻量的S盒构造方法
-
-// 目前，为了能快速优化4×4的S盒，研究人员主要采用#bluet[自动化的方法搜索S盒]，
-// 具体可以细分为两个方向。
-
-// #pause
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     方向一：首先获得具有良好密码特性的S盒，然后通过某种方法优化S盒的硬件逻辑电路
-//   ]
-// ]
-
-// #pause
-
-// #text(size: 12pt)[
-//   Jean等人应用#bluet[LIGHTER]搜索给定4×4 S盒的面积优化实现。但LIGHTER的一个缺失考虑因素是实现延迟的度量。Stoffelen将寻找最佳位片实现的整个问题建模为SAT求解器可以解决的问题。然而，与其他启发式方法相比，在处理一些"强"S盒时，效率并不令人满意。进一步的，Bao等人优化了搜索效率提出了一个名为#bluet[PEIGEN]的平台来评估安全性，为给定的S盒找到有效的软件/硬件实现。
-// ]
-
-// ==== 02 侧重低延迟或侧重轻量的S盒构造方法
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     方向二：首先从硬件逻辑层创建紧凑的S盒，然后检查其密码特性
-//   ]
-// ]
-
-// #pause
-
-// #text(size: 12pt)[
-//   Watanabe等人使用对#bluet[基本可逆函数的迭代]来生成初始S盒集，然后将约束添加到初始S盒集中以获得目标S盒。
-
-//   #pause
-
-//   Guo等人提出了一种在#bluet[ASIC中寻找电路深度优化]的实现的方法。本质上，该工具首先给定S盒和每个单元操作的成本，作为初始S盒集。然后，输出查询结果和四个坐标的深度中的最大值。
-// ]
-
-// ==== 03 侧重低延迟和比特切片的线性矩阵构造方法
-
-// 为了快速找到性能优良的矩阵，研究人员主要采用#bluet[启发式算法搜索矩阵]，
-// 具体可以细分为三个方向。
-
-// #pause
-
-// #text(size: 14pt, fill: red)[方向一：] 首先搜索一个性能好的矩阵，然后再搜索该矩阵的良好硬件实现
-
-// #pause
-
-// #text(size: 14pt, fill: red)[方向二：] 首先从逻辑层搜索可行的矩阵构造，然后检查其矩阵分支数特性
-
-// #pause
-
-// #text(size: 14pt, fill: red)[方向三：] 首先确定轻量的小规格矩阵，然后通过递归、子域构造的方法构造性能良好的大规格矩阵
-
-
-// == 线性层构造详述(1)
-
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     首先搜索一个性能好的矩阵，然后再搜索该矩阵的良好硬件实现
-//   ]
-// ]
-
-// #pause
-
-// #text(size: 12pt)[
-//   Guo、Peyrin等人提出了一种减少实现占用空间的方法是找到一个轻量级矩阵A，使A^k其满足MDS。A^k的实现可以通过递归"执行"A的实现k次来获得。从而通过低的资源实现矩阵。
-// ]
-
-
-// == 线性层构造详述(2)
-
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     首先从逻辑层搜索可行的矩阵构造，然后检查其矩阵分支数特性
-//   ]
-// ]
-
-// #pause
-
-// #text(size: 12pt)[
-//   Spook设计人员对潜在的矩阵实现进行搜索，直到获得具有良好分支数的LBox；Gaëtan Leurent等人通过考虑一次对3个或4个字进行操作的线性层来扩展Spook的构造。
-// ]
-
-
-// == 线性层构造详述(3)
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     (1) 一种高扩散、低延迟的轻量级分组密码LTLBC的设计与实现
-//   ]
-// ]
-
-// #pause
-
-// #grid(
-//   columns: 2,
-//   gutter: 20pt,
-//   [
-//     #text(size: 12pt)[
-//       • #bluet[线性层设计方案]：一方面采用类似GIFT中置换操作的设计方法，并进行扩展。另一方面，增加一个简单的基于字的对合映射，筛选得到一组综合效果最优的移位参数。
-
-//       #pause
-
-//       研究高效的#redt[比特置换层]
-
-//       #pause
-
-//       研究操作简单的#redt[对合映射]
-//     ]
-//   ],
-//   [
-//     #align(center)[
-//       #text(size: 10pt)[线性层结构示意图]
-
-//       #raw(
-//         "
-//         16  16  16  16
-//         |   |   |   |
-//         |   |   |   |
-//         64
-//         |
-//         64
-//         |   |   |   |
-//         16  16  16  16
-//         ",
-//       )
-//     ]
-//   ],
-// )
-
-
-// == LTLBC研究(4)
-
-// #align(center)[
-//   #text(size: 16pt, fill: red)[
-//     (1) 一种高扩散、低延迟的轻量级分组密码LTLBC的设计与实现
-//   ]
-// ]
-
-// #pause
-
-// • #bluet[硬件架构]：算法的轮函数与密钥更新操作使得算法可以以基于轮的架构和基于全展开的架构高效实现。
-
-// #pause
-
-// #grid(
-//   columns: 2,
-//   gutter: 20pt,
-//   [
-//     #align(center)[
-//       #text(size: 12pt, fill: blue)[基于轮的实现架构]
-
-//       #raw(
-//         "
-//         Plaintext  Key
-//             |      |
-//             64     64
-//             |      |
-//         [0:63] [64:127]
-//             |      |
-//         Add_key    |
-//             |  <<<21
-//         Sub_cells  |
-//             |      |
-//         S-LM       |
-//             |      |
-//         Permutebits|
-//             |      |
-//             64    64
-//             |     |
-//         Ciphertext
-//         ",
-//       )
-//     ]
-//   ],
-//   [
-//     #align(center)[
-//       #text(size: 12pt, fill: blue)[基于全展开的实现架构]
-
-//       #raw(
-//         "
-//         128    128
-//          |      |
-//         64     64
-//          |      |
-//       Mux    Mux
-//        2:1    2:1
-//         |      |
-//       Reg_0  Reg_1
-//         |      |
-//       Add_con  |
-//         |      |
-//         RCi   456
-//          |     |
-//          S     4
-//         ",
-//       )
-//     ]
-//   ],
-// )
-
+    #align(center)[
+      #text(fill: red)[
+        基于分组密码，对密码算法的结构或部件进行改进
+      ]
+    ]
+  ],
+  [
+    3. #bluet[应用场景设计]
+
+    #align(center)[
+      #text(fill: red)[
+        针对特定应用场景或需求进行设计的轻量级算法
+      ]
+    ]
+
+    4. #bluet[量子计算]
+
+    #align(center)[
+      #text(fill: red)[
+        面对量子计算威胁的后量子密码学研究
+      ]
+    ]
+  ],
+)
+
+== 优化实现
+
+#align(center)[
+  #text(fill: red)[
+    对已有的轻量级密码分组密码算法进行硬件优化实现
+  ]
+]
+
+#bluet[以《Efficient implementations of CRAFT cipher for Internet of Things》为例]
+
+#pause
+
+针对CRAFT算法提出了#redt[3种新的硬件架构实现]。
+
+#align(center)[
+  实验量少，关键在论文的书写。
+
+  只需进行#bluet[不同的硬件优化架构实现]，比较#bluet[硬件参数]。
+]
+
+
+== 结构改进方法
+
+#align(center)[
+  #text(fill: red)[
+    基于分组密码，对密码算法的结构或部件进行改进
+  ]
+]
+
+#grid(
+  columns: 4,
+  gutter: 10pt,
+  [
+    #align(center)[
+      #bluet[Feistel结构]
+
+      #cetz.canvas(length: 1.8cm, {
+        import cetz.draw: *
+
+        // Input
+        rect((0, 4), (2, 4.5), fill: blue.lighten(80%), stroke: blue)
+        content((1, 4.25), [明文], anchor: "center")
+
+        // Split
+        line((1, 4), (0.5, 3.5))
+        line((1, 4), (1.5, 3.5))
+
+        // L0, R0
+        rect((0, 3), (1, 3.5), fill: gray.lighten(80%))
+        content((0.5, 3.25), [L₀], anchor: "center")
+        rect((1, 3), (2, 3.5), fill: gray.lighten(80%))
+        content((1.5, 3.25), [R₀], anchor: "center")
+
+        // Round function
+        rect((2.2, 2.5), (3.2, 3), fill: red.lighten(80%), stroke: red)
+        content((2.7, 2.75), [F], anchor: "center")
+        line((1.5, 3), (2.2, 2.75))
+
+        // Key
+        rect((3.5, 2.5), (4.2, 3), fill: green.lighten(80%))
+        content((3.85, 2.75), [k₁], anchor: "center")
+        line((3.5, 2.75), (3.2, 2.75))
+
+        // XOR
+        circle((0.5, 2.25), radius: 0.15, stroke: black)
+        content((0.5, 2.25), [⊕], anchor: "center")
+        line((0.5, 3), (0.5, 2.4))
+        line((2.7, 2.5), (0.65, 2.25))
+
+        // L1, R1
+        rect((0, 1.5), (1, 2), fill: gray.lighten(80%))
+        content((0.5, 1.75), [L₁], anchor: "center")
+        rect((1, 1.5), (2, 2), fill: gray.lighten(80%))
+        content((1.5, 1.75), [R₁], anchor: "center")
+
+        line((0.5, 2.1), (0.5, 2))
+        line((1.5, 3), (1.5, 2))
+
+        // Dots
+        content((1, 1), [...], anchor: "center")
+      })
+    ]
+  ],
+  [
+    #align(center)[
+      #bluet[SPN结构]
+
+      #cetz.canvas(length: 1.7cm, {
+        import cetz.draw: *
+
+        // Input
+        rect((0, 4.5), (2, 5), fill: blue.lighten(80%), stroke: blue)
+        content((1, 4.75), [明文], anchor: "center")
+
+        // S-box layer
+        rect((0, 3.8), (2, 4.3), fill: red.lighten(80%), stroke: red)
+        content((1, 4.05), [S盒层], anchor: "center")
+        line((1, 4.5), (1, 4.3))
+
+        // P-box layer
+        rect((0, 3.1), (2, 3.6), fill: green.lighten(80%), stroke: green)
+        content((1, 3.35), [P盒层], anchor: "center")
+        line((1, 3.8), (1, 3.6))
+
+        // S-box layer
+        rect((0, 2.4), (2, 2.9), fill: red.lighten(80%), stroke: red)
+        content((1, 2.65), [S盒层], anchor: "center")
+        line((1, 3.1), (1, 2.9))
+
+        // P-box layer
+        rect((0, 1.7), (2, 2.2), fill: green.lighten(80%), stroke: green)
+        content((1, 1.95), [P盒层], anchor: "center")
+        line((1, 2.4), (1, 2.2))
+
+        // Output
+        rect((0, 1), (2, 1.5), fill: blue.lighten(80%), stroke: blue)
+        content((1, 1.25), [密文], anchor: "center")
+        line((1, 1.7), (1, 1.5))
+      })
+    ]
+  ],
+  [
+    #align(center)[
+      #bluet[QTL结构]
+
+      #cetz.canvas(length: 2cm, {
+        import cetz.draw: *
+
+        // Input
+        rect((0, 3), (2, 3.4), fill: blue.lighten(80%), stroke: blue)
+        content((1, 3.2), [明文], anchor: "center")
+
+        // Quarter rounds
+        rect((0, 2.4), (0.9, 2.8), fill: red.lighten(80%), stroke: red)
+        content((0.45, 2.6), [Q₁], anchor: "center")
+        rect((1.1, 2.4), (2, 2.8), fill: red.lighten(80%), stroke: red)
+        content((1.55, 2.6), [Q₂], anchor: "center")
+
+        line((0.5, 3), (0.45, 2.8))
+        line((1.5, 3), (1.55, 2.8))
+
+        // Twist layer
+        rect((0, 1.8), (2, 2.2), fill: green.lighten(80%), stroke: green)
+        content((1, 2), [Twist], anchor: "center")
+        line((0.45, 2.4), (1, 2.2))
+        line((1.55, 2.4), (1, 2.2))
+
+        // Output
+        rect((0, 1.2), (2, 1.6), fill: blue.lighten(80%), stroke: blue)
+        content((1, 1.4), [密文], anchor: "center")
+        line((1, 1.8), (1, 1.6))
+      })
+    ]
+  ],
+  [
+    #align(center)[
+      #bluet[ARX结构]
+
+      #cetz.canvas(length: 2cm, {
+        import cetz.draw: *
+
+        // Input
+        rect((0, 3), (2, 3.4), fill: blue.lighten(80%), stroke: blue)
+        content((1, 3.2), [明文], anchor: "center")
+
+        // Add operation
+        rect((0, 2.4), (0.6, 2.8), fill: red.lighten(80%), stroke: red)
+        content((0.3, 2.6), [+], anchor: "center")
+
+        // Rotate operation
+        rect((0.7, 2.4), (1.3, 2.8), fill: green.lighten(80%), stroke: green)
+        content((1, 2.6), [≪], anchor: "center")
+
+        // XOR operation
+        rect((1.4, 2.4), (2, 2.8), fill: orange.lighten(80%), stroke: orange)
+        content((1.7, 2.6), [⊕], anchor: "center")
+
+        line((0.5, 3), (0.3, 2.8))
+        line((1, 3), (1, 2.8))
+        line((1.5, 3), (1.7, 2.8))
+
+        // Multiple rounds indication
+        content((1, 2.1), [...], anchor: "center")
+
+        // Output
+        rect((0, 1.5), (2, 1.9), fill: blue.lighten(80%), stroke: blue)
+        content((1, 1.7), [密文], anchor: "center")
+        line((1, 2.0), (1, 1.9))
+      })
+    ]
+  ],
+)
+
+== 应用场景设计
+
+#align(center)[
+  #text(fill: red)[
+    针对特定应用场景或者需求进行设计的轻量级分组密码算法
+  ]
+]
+
+典型算法示例：
+
+- #bluet[(1)] 面向软硬件灵活实现的LBlock算法
+- #bluet[(2)] 专注低能耗指标设计的Midori算法
+- #bluet[(3)] 基于低延迟理念设计的PRINCE算法
+- #bluet[(4)] 面向IC打印的PRINTcipher算法
+
+== 应用场景设计 - LBlock算法
+
+
+#grid(
+  columns: 2,
+  gutter: 20pt,
+  [
+    #align(center)[
+      #text(size: 16pt)[LBlock算法加密流程图]
+
+      #cetz.canvas(length: 2cm, {
+        import cetz.draw: *
+
+        // 64-bit input split into X0, X1 (32-bit each)
+        rect((0, 4), (1, 4.4), fill: blue.lighten(80%), stroke: blue)
+        content((0.5, 4.2), text(size: 8pt, [X₀]), anchor: "center")
+        rect((1.5, 4), (2.5, 4.4), fill: blue.lighten(80%), stroke: blue)
+        content((2, 4.2), text(size: 8pt, [X₁]), anchor: "center")
+
+        // Left line (X0 stays)
+        line((0.5, 4), (0.5, 3.5))
+
+        // Right rotation <<<8
+        rect((1.5, 3.5), (2.5, 3.8), fill: green.lighten(80%), stroke: green)
+        content((2, 3.65), text(size: 10pt, [≪8]), anchor: "center")
+        line((2, 4), (2, 3.8))
+
+        // Round function F
+        rect((0, 2.8), (1, 3.2), fill: red.lighten(80%), stroke: red)
+        content((0.5, 3), text(size: 8pt, [F]), anchor: "center")
+        line((0.5, 3.5), (0.5, 3.2))
+
+        // XOR operation
+        circle((1.25, 2.5), radius: 0.1, stroke: black)
+        content((1.25, 2.5), text(size: 10pt, [⊕]), anchor: "center")
+        line((0.5, 2.8), (1.15, 2.5))
+        line((2, 3.5), (1.35, 2.5))
+
+        // Round output
+        rect((0.75, 2), (1.75, 2.4), fill: gray.lighten(80%))
+        content((1.25, 2.2), text(size: 10pt, [轮输出]), anchor: "center")
+        line((1.25, 2.4), (1.25, 2.4))
+
+        // 32 rounds indication
+        content((1.25, 1.5), text(size: 8pt, [32轮]), anchor: "center")
+      })
+    ]
+  ],
+  [
+    LBlock采用了#bluet[4位逐字排列]，使得算法不仅可以在硬件中廉价实现，而且可以在软件环境中廉价实现。
+
+    #pause
+
+    #text()[
+      - 硬件：需要1320GE，吞吐量200Kbps
+      - 软件：8位微控制器，加密64位数据需要3955个时钟周期
+      - 算法每一轮只使用一半数据，另一半使用简单移位
+      - 密钥调度以流密码方式设计
+    ]
+  ],
+)
+
+== 应用场景设计 - Midori算法 #bluet[低能耗]
+
+#grid(
+  columns: 2,
+  gutter: 20pt,
+  [
+    #text()[
+      (1) 列混淆使用4×4几乎MDS二进制矩阵，在面积和信号延迟方面比4×4 MDS矩阵更有效。
+
+      (2) 使用了一个轻量级、小延迟的4位S-box。该S盒中的信号延迟分别是PRINCE和PRESENT的1.5倍和2倍。
+
+      (3) 低轮数。
+
+      (4) Midori算法的加密和解密功能相互转换时，只需要通过在电路中的小调整就可以达到加解密一致。
+    ]
+  ],
+  [
+    #align(center)[
+      #text(size: 16pt)[Midori算法加密流程图]
+
+      #cetz.canvas(length: 1.5cm, {
+        import cetz.draw: *
+
+        // Input
+        rect((0, 5), (2, 5.4), fill: blue.lighten(80%), stroke: blue)
+        content((1, 5.2), text(size: 8pt, [明文]), anchor: "center")
+
+        // Whitening key addition
+        rect((0, 4.4), (2, 4.8), fill: green.lighten(80%), stroke: green)
+        content((1, 4.6), text(size: 10pt, [KA(WK)]), anchor: "center")
+        line((1, 5), (1, 4.8))
+
+        // Round structure (repeated 15 times)
+        rect((0, 3.8), (2, 4.2), fill: red.lighten(80%), stroke: red)
+        content((1, 4), text(size: 10pt, [SB]), anchor: "center")
+        line((1, 4.4), (1, 4.2))
+
+        rect((0, 3.2), (2, 3.6), fill: orange.lighten(80%), stroke: orange)
+        content((1, 3.4), text(size: 10pt, [SC]), anchor: "center")
+        line((1, 3.8), (1, 3.6))
+
+        rect((0, 2.6), (2, 3), fill: purple.lighten(80%), stroke: purple)
+        content((1, 2.8), text(size: 10pt, [MC]), anchor: "center")
+        line((1, 3.2), (1, 3))
+
+        rect((0, 2), (2, 2.4), fill: green.lighten(80%), stroke: green)
+        content((1, 2.2), text(size: 10pt, [KA(RKᵢ)]), anchor: "center")
+        line((1, 2.6), (1, 2.4))
+
+        // Indication of 15 rounds
+        content((2.5, 3.1), text(size: 8pt, [15轮]), anchor: "center", angle: -90deg)
+
+        // Final round
+        rect((0, 1.4), (2, 1.8), fill: red.lighten(80%), stroke: red)
+        content((1, 1.6), text(size: 10pt, [SB]), anchor: "center")
+        line((1, 2), (1, 1.8))
+
+        // Final whitening
+        rect((0, 0.8), (2, 1.2), fill: green.lighten(80%), stroke: green)
+        content((1, 1), text(size: 10pt, [KA(WK)]), anchor: "center")
+        line((1, 1.4), (1, 1.2))
+
+        // Output
+        rect((0, 0.2), (2, 0.6), fill: blue.lighten(80%), stroke: blue)
+        content((1, 0.4), text(size: 8pt, [密文]), anchor: "center")
+        line((1, 0.8), (1, 0.6))
+      })
+    ]
+  ],
+)
+
+== 应用场景设计 - PRINCE算法 #bluet[低延迟]
+
+#grid(
+  columns: 2,
+  gutter: 20pt,
+  [
+    #text()[
+      PRINCE算法低延迟主要的方式是#bluet[轮数尽可能地少]，轮函数中的部件尽量采用#bluet[低延迟]。
+
+      #pause
+
+      因此，PRINCE的轮数只有#redt[11轮]（5+1+5），还采用了一个#bluet[几乎MDS矩阵]，这样有助于为各种类型攻击提供更好边界，进而可以允许减少轮数，从而减少延迟。
+
+
+      除此之外，PRINCE的加密结构也很新颖，具有#redt[α-反射性质]：
+      - 解密 = 加密(相关密钥)
+    ]
+  ],
+  [
+    #align(center)[
+      #text(size: 16pt)[PRINCE算法加密流程图]
+
+      #cetz.canvas(length: 1.8cm, {
+        import cetz.draw: *
+
+        // Input
+        rect((0, 6), (2, 6.4), fill: blue.lighten(80%), stroke: blue)
+        content((1, 6.2), text(size: 8pt, [明文]), anchor: "center")
+
+        // Pre-whitening with k0 XOR k1
+        rect((0, 5.4), (2, 5.8), fill: green.lighten(80%), stroke: green)
+        content((1, 5.6), text(size: 10pt, [k₀ ⊕ k₁]), anchor: "center")
+        line((1, 6), (1, 5.8))
+
+        // Forward rounds (5 rounds)
+        rect((0, 4.8), (2, 5.2), fill: red.lighten(80%), stroke: red)
+        content((1, 5), text(size: 10pt, [前向轮]), anchor: "center")
+        line((1, 5.4), (1, 5.2))
+
+        content((2.3, 5), text(size: 6pt, [5轮]), anchor: "center")
+
+        // Middle round (special)
+        rect((0, 4.2), (2, 4.6), fill: orange.lighten(80%), stroke: orange)
+        content((1, 4.4), text(size: 10pt, [中间轮]), anchor: "center")
+        line((1, 4.8), (1, 4.6))
+
+        // Backward rounds (5 rounds) - involutory property
+        rect((0, 3.6), (2, 4), fill: purple.lighten(80%), stroke: purple)
+        content((1, 3.8), text(size: 10pt, [后向轮]), anchor: "center")
+        line((1, 4.2), (1, 4))
+
+        content((2.3, 3.8), text(size: 6pt, [5轮]), anchor: "center")
+
+        // Post-whitening with k0 XOR k1'
+        rect((0, 3), (2, 3.4), fill: green.lighten(80%), stroke: green)
+        content((1, 3.2), text(size: 10pt, [k₀ ⊕ k₁']), anchor: "center")
+        line((1, 3.6), (1, 3.4))
+
+        // Output
+        rect((0, 2.4), (2, 2.8), fill: blue.lighten(80%), stroke: blue)
+        content((1, 2.6), text(size: 8pt, [密文]), anchor: "center")
+        line((1, 3), (1, 2.8))
+
+        // Alpha reflection property indication
+        content((0, 1.8), text(size: 6pt, [α-反射性质]), anchor: "center")
+        content((0, 1.5), text(size: 6pt, [解密=加密]), anchor: "center")
+      })
+    ]
+  ],
+)
+
+
+== 应用场景设计 - PRINTcipher算法
+
+
+由于IC打印中使用到的#bluet[电子产品代码（EPC）]的长度为96位，因此PRINTcipher使用的明文长度为#redt[48bit和96bit]两个版本，密钥长度为#redt[160bit]，两个版本分别对应的轮数为#redt[48，96轮]。
+
+#pause
+
+常规的IC为了节省开销，一般要求IC中的使用密钥不进行更改，因此，PRINTcipher算法的#bluet[没有密钥扩展部分]，设计者通过使用一种排列方法，使得算法可以根据不同的密钥具有不同的加密流程。
+
+== 密码组件 - 侧重低延迟或侧重轻量的S盒构造方法
+
+目前，为了能快速优化4×4的S盒，研究人员主要采用#bluet[自动化的方法搜索S盒]，
+具体可以细分为两个方向。
+
+#pause
+
+#align(center)[
+  #text(fill: red)[
+    方向一：首先获得具有良好密码特性的S盒，然后通过某种方法优化S盒的硬件逻辑电路
+  ]
+]
+
+#pause
+
+#text()[
+  Jean等人应用#bluet[LIGHTER]搜索给定4×4 S盒的面积优化实现。但LIGHTER的一个缺失考虑因素是实现延迟的度量。Stoffelen将寻找最佳位片实现的整个问题建模为SAT求解器可以解决的问题。然而，与其他启发式方法相比，在处理一些"强"S盒时，效率并不令人满意。
+]
+
+#pagebreak()
+
+#align(center)[
+  #text(fill: red)[
+    方向二：首先从硬件逻辑层创建紧凑的S盒，然后检查其密码特性
+  ]
+]
+
+#pause
+
+#text()[
+  Watanabe等人使用对#bluet[基本可逆函数的迭代]来生成初始S盒集，然后将约束添加到初始S盒集中以获得目标S盒。
+
+  #pause
+
+  Guo等人提出了一种在#bluet[ASIC中寻找电路深度优化]的实现的方法。本质上，该工具首先给定S盒和每个单元操作的成本，作为初始S盒集。然后，输出查询结果和四个坐标的深度中的最大值。
+]
+
+== 密码组件 - 侧重低延迟和比特切片的线性矩阵构造方法
+
+为了快速找到性能优良的矩阵，研究人员主要采用#bluet[启发式算法搜索矩阵]，
+具体可以细分为三个方向。
+
+#pause
+
+#text(fill: red)[方向一：] 首先搜索一个性能好的矩阵，然后再搜索该矩阵的良好硬件实现
+
+#pause
+
+#text(fill: red)[方向二：] 首先从逻辑层搜索可行的矩阵构造，然后检查其矩阵分支数特性
+
+#pause
+
+#text(fill: red)[方向三：] 首先确定轻量的小规格矩阵，然后通过递归、子域构造的方法构造性能良好的大规格矩阵
+
+== 量子计算 - 密码技术
+
+#align(center)[
+  #text(fill: red)[
+    面对量子计算威胁的后量子密码学研究
+  ]
+]
+
+随着量子计算技术的快速发展，传统的RSA、ECC等公钥密码算法面临被量子计算机破解的威胁。
+#bluet[2024年Google的Willow芯片]和#bluet[2025年Microsoft的Majorana 1]等量子计算突破，
+使得后量子密码学成为当前最热门的研究方向。
+
+#pagebreak()
+
+#align(center)[
+  #text(fill: blue)[
+    后量子密码技术路线分类
+  ]
+]
+
+#grid(
+  columns: 5,
+  gutter: 8pt,
+  [
+    #align(center)[
+      #bluet[格密码]
+
+      #cetz.canvas(length: 1.8cm, {
+        import cetz.draw: *
+
+        // Grid structure representing lattice
+        for i in range(4) {
+          for j in range(4) {
+            circle((i * 0.5, j * 0.5), radius: 0.05, fill: blue, stroke: blue)
+          }
+        }
+
+        // Lattice vectors
+        line((0, 0), (1.5, 0.5), stroke: red + 2pt)
+        line((0, 0), (0.5, 1.5), stroke: red + 2pt)
+
+        content((0.75, 2), text(size: 9pt, [CRYSTALS]), anchor: "center")
+        content((0.75, 1.8), text(size: 8pt, [Kyber/Dilithium]), anchor: "center")
+      })
+    ]
+  ],
+  [
+    #align(center)[
+      #bluet[编码理论]
+
+      #cetz.canvas(length: 1.8cm, {
+        import cetz.draw: *
+
+        // Error correction visualization
+        rect((0, 1.5), (2, 2), fill: green.lighten(80%), stroke: green)
+        content((1, 1.75), text(size: 8pt, [信息位]), anchor: "center")
+
+        rect((0, 1), (2, 1.4), fill: red.lighten(80%), stroke: red)
+        content((1, 1.2), text(size: 8pt, [校验位]), anchor: "center")
+
+        rect((0, 0.5), (2, 0.9), fill: orange.lighten(80%), stroke: orange)
+        content((1, 0.7), text(size: 8pt, [错误纠正]), anchor: "center")
+
+        content((1, 0.2), text(size: 9pt, [McEliece]), anchor: "center")
+      })
+    ]
+  ],
+  [
+    #align(center)[
+      #bluet[多变量]
+
+      #cetz.canvas(length: 1.8cm, {
+        import cetz.draw: *
+
+        // Multivariate polynomial system
+        content((1, 1.8), text(size: 9pt, [f₁(x₁,...,xₙ)=0]), anchor: "center")
+        content((1, 1.5), text(size: 9pt, [f₂(x₁,...,xₙ)=0]), anchor: "center")
+        content((1, 1.2), text(size: 9pt, [...]), anchor: "center")
+        content((1, 0.9), text(size: 9pt, [fₘ(x₁,...,xₙ)=0]), anchor: "center")
+
+        content((1, 0.5), text(size: 11pt, [Rainbow]), anchor: "center")
+        content((1, 0.3), text(size: 11pt, [GeMSS]), anchor: "center")
+      })
+    ]
+  ],
+  [
+    #align(center)[
+      #bluet[哈希函数]
+
+      #cetz.canvas(length: 1.8cm, {
+        import cetz.draw: *
+
+        // Hash tree structure
+        circle((1, 1.8), radius: 0.1, fill: blue)
+        circle((0.5, 1.4), radius: 0.08, fill: green)
+        circle((1.5, 1.4), radius: 0.08, fill: green)
+        circle((0.25, 1), radius: 0.06, fill: red)
+        circle((0.75, 1), radius: 0.06, fill: red)
+        circle((1.25, 1), radius: 0.06, fill: red)
+        circle((1.75, 1), radius: 0.06, fill: red)
+
+        line((1, 1.7), (0.5, 1.48))
+        line((1, 1.7), (1.5, 1.48))
+        line((0.5, 1.32), (0.25, 1.06))
+        line((0.5, 1.32), (0.75, 1.06))
+        line((1.5, 1.32), (1.25, 1.06))
+        line((1.5, 1.32), (1.75, 1.06))
+
+        content((1, 0.6), text(size: 11pt, [SPHINCS+]), anchor: "center")
+      })
+    ]
+  ],
+  [
+    #align(center)[
+      #bluet[同源理论]
+
+      #cetz.canvas(length: 1.8cm, {
+        import cetz.draw: *
+
+        // Isogeny between elliptic curves
+        circle((0.5, 1.5), radius: 0.3, stroke: blue + 1pt, fill: none)
+        circle((1.5, 1.5), radius: 0.3, stroke: red + 1pt, fill: none)
+
+        // Isogeny arrow
+        line((0.8, 1.5), (1.2, 1.5), stroke: green + 2pt)
+        content((1, 1.6), text(size: 12pt, [φ]), anchor: "center")
+
+        content((0.5, 1), text(size: 12pt, [E₁]), anchor: "center")
+        content((1.5, 1), text(size: 12pt, [E₂]), anchor: "center")
+
+        content((1, 0.6), text(size: 11pt, [SIKE]), anchor: "center")
+        content((1, 0.4), text(size: 10pt, [(已破解)]), anchor: "center")
+      })
+    ]
+  ],
+)
+
+
+== 量子计算 - NIST标准化算法（2024-2025）
+
+#grid(
+  columns: 2,
+  gutter: 20pt,
+  [
+    #text()[
+      - #bluet[ML-KEM]（基于CRYSTALS-Kyber）
+        - 密钥封装机制
+
+      - #bluet[ML-DSA]（基于CRYSTALS-Dilithium）
+        - 数字签名算法
+
+      - #bluet[SLH-DSA]（基于SPHINCS+）
+        - 无状态哈希签名
+
+      *新增算法（2025年3月）：*
+
+      - #bluet[HQC] - 基于编码理论
+    ]
+  ],
+  [
+    #align(center)[
+      #text(size: 14pt)[量子威胁时间线]
+
+      #cetz.canvas(length: 4cm, {
+        import cetz.draw: *
+
+        // Timeline
+        line((0, 2), (0, 0.2), stroke: black + 2pt)
+
+        // 2024
+        line((-0.1, 1.8), (0.1, 1.8), stroke: blue + 2pt)
+        content((0.8, 1.8), text(size: 10pt, [2024: NIST标准发布]), anchor: "west")
+
+        // 2025
+        line((-0.1, 1.5), (0.1, 1.5), stroke: green + 2pt)
+        content((0.8, 1.5), text(size: 10pt, [2025: HQC算法标准化]), anchor: "west")
+
+        // 2029
+        line((-0.1, 1.2), (0.1, 1.2), stroke: orange + 2pt)
+        content((0.8, 1.2), text(size: 10pt, [2029: 核心服务采用]), anchor: "west")
+
+        // 2034
+        line((-0.1, 0.9), (0.1, 0.9), stroke: red + 2pt)
+        content((0.8, 0.9), text(size: 10pt, [2034: 17-34%破解概率]), anchor: "west")
+
+        // 2035
+        line((-0.1, 0.6), (0.1, 0.6), stroke: purple + 2pt)
+        content((0.8, 0.6), text(size: 10pt, [2035: 美国强制采用]), anchor: "west")
+
+        content((0, 0.3), text(size: 12pt, [量子威胁迫近]), anchor: "center")
+      })
+    ]
+  ],
+)
+
+
+== 量子计算 - 产业应用现状与挑战
+
+#text()[
+  *技术突破*：
+  - Google Willow芯片：减少量子噪声和错误
+  - 理论预测：100万量子比特可在1周内破解RSA-2048
+  - 中国"本源悟空"装备PQC"抗量子攻击护盾"
+
+  *应用挑战*：
+  - 算法性能开销：后量子算法密钥长度和计算复杂度显著增加
+  - 迁移复杂性：需要重新设计整个密码基础设施
+  - 标准不统一：不同应用场景需要不同的后量子算法
+  - 人才短缺：后量子密码学专业人才严重不足
+]
 
 // = 论文书写及投稿
 
