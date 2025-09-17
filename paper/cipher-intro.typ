@@ -37,7 +37,7 @@
   = 我们在密码技术研究上的进展
   #v(2em)
 
-  // 主讲：向嘉豪
+  主讲：23电子信息-向嘉豪
 
   #v(2em)
   #datetime.today().display()
@@ -1579,12 +1579,25 @@ Alice如何确认消息真的来自Bob？Bob如何确认消息真的来自Alice�
 
 
 
-#title-slide[
-  = 我们在密码技术研究上的进展
-  #v(2em)
+= Q&A
 
-  // 主讲：向嘉豪
 
-  #v(2em)
-  #datetime.today().display()
-]
+#grid(
+  columns: 2,
+  gutter: 40pt,
+  [
+    #align(center)[
+
+      #image("fig/wechat.jpg", width: 60%)
+
+    ]
+  ],
+  [
+    #align(center)[
+
+      #image("fig/bilibili.jpg", width: 60%)
+
+    ]
+  ],
+)
+
